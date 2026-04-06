@@ -200,10 +200,7 @@ export default function AdminSidebar({ fullName }: AdminSidebarProps) {
                 <div className="flex flex-col gap-0.5">
                   {group.items.map((item) => {
                     const Icon = item.icon;
-                    const isActive =
-                      item.href === "/admin"
-                        ? pathname === "/admin"
-                        : pathname.startsWith(item.href);
+const isActive = pathname === item.href;
 
                     return (
                       <Link

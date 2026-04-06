@@ -38,7 +38,58 @@ export type Database = {
         };
         Relationships: [];
       };
+
+      // ✅ ADD THIS BLOCK
+      cars: {
+        Row: {
+          id: number;
+          name: string | null;
+          category: string | null;
+          type: string | null;
+          price: number | null;
+          year: number | null;
+          mileage: number | null;
+          fuel: string | null;
+          transmission: string | null;
+          image: string | null;
+          badge: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: number;
+          name?: string | null;
+          category?: string | null;
+          type?: string | null;
+          price?: number | null;
+          year?: number | null;
+          mileage?: number | null;
+          fuel?: string | null;
+          transmission?: string | null;
+          image?: string | null;
+          badge?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: number;
+          name?: string | null;
+          category?: string | null;
+          type?: string | null;
+          price?: number | null;
+          year?: number | null;
+          mileage?: number | null;
+          fuel?: string | null;
+          transmission?: string | null;
+          image?: string | null;
+          badge?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
     };
+
     Views: Record<string, never>;
     Functions: Record<string, never>;
     Enums: Record<string, never>;
