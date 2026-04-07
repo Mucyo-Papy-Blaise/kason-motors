@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "Inventory", href: "/inventory" },
-  { label: "About", href: "/#about" },
-  { label: "Dealers", href: "/#dealers" },
+  { label: "Home", href: "#" },
+  { label: "Inventory", href: "inventory" },
+  { label: "About", href: "about" },
+  { label: "Contact Us", href: "contact" },
 ];
 
 type NavbarProps = {
