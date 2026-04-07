@@ -33,42 +33,58 @@ export async function POST(request: NextRequest) {
     validateCloudinaryConfig();
 
     const data = await request.json();
-    const { mainImage, subImages } = data;
+    const { images, videos, video, mainImage, subImages } = data;
+    const normalizedImages = Array.isArray(images)
+      ? images.filter((image: unknown): image is string => typeof image === "string" && image.length > 0)
+      : [mainImage, ...(Array.isArray(subImages) ? subImages : [])].filter(
+          (image: unknown): image is string => typeof image === "string" && image.length > 0
+        );
+    const normalizedVideos = (
+      Array.isArray(videos) ? videos : [video]
+    ).filter((videoItem: unknown): videoItem is string => typeof videoItem === "string" && videoItem.length > 0);
 
-    if (!mainImage) {
+    if (normalizedImages.length === 0 && normalizedVideos.length === 0) {
       return NextResponse.json(
-        { success: false, message: "No main image provided" },
+        { success: false, message: "No media provided" },
         { status: 400 }
       );
     }
 
-    const mainImageResult = await cloudinary.uploader.upload(mainImage, {
-      folder: "longtai",
-    });
-
-    let subImageUrls: string[] = [];
-    if (subImages && subImages.length > 0) {
-      const subImagePromises = subImages.map((image: string) =>
+    const imageUploadResults = await Promise.all(
+      normalizedImages.map((image) =>
         cloudinary.uploader.upload(image, {
           folder: "longtai",
         })
-      );
-      const subImageResults = await Promise.all(subImagePromises);
-      subImageUrls = subImageResults.map((result) => result.secure_url);
-    }
+      )
+    );
+    const videoUploadResults = await Promise.all(
+      normalizedVideos.map((video) =>
+        cloudinary.uploader.upload(video, {
+          folder: "longtai",
+          resource_type: "video",
+        })
+      )
+    );
+    const imageUrls = imageUploadResults.map((result) => result.secure_url);
+    const videoUrls = videoUploadResults.map((result) => result.secure_url);
 
     return NextResponse.json({
       success: true,
-      mainImageUrl: mainImageResult.secure_url,
-      subImageUrls,
+      mainImageUrl: imageUrls[0] ?? "",
+      subImageUrls: imageUrls.slice(1),
+      imageUrls,
+      videoUrls,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to upload media";
+    const details = error instanceof Error ? error.stack : undefined;
+
     console.error("Error uploading to Cloudinary:", error);
     return NextResponse.json(
       {
         success: false,
-        message: error.message || "Failed to upload image(s)",
-        details: error.stack,
+        message,
+        details,
       },
       { status: 500 }
     );

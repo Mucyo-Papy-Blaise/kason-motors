@@ -1,11 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import SearchModal from "./Searchmodal";
 
 export default function SearchSection() {
+  const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
+  const [carsCount, setCarsCount] = useState(0);
+  const quickFilters = useMemo(
+    () => ["All Conditions", "New Cars", "Used Cars", "Certified"],
+    [],
+  );
+
+  useEffect(() => {
+    const fetchCarsCount = async () => {
+      try {
+        const response = await fetch("/api/vehicles/getList");
+        const result = await response.json();
+        if (!response.ok || !result.success || !Array.isArray(result.data)) {
+          setCarsCount(0);
+          return;
+        }
+        setCarsCount(result.data.length);
+      } catch {
+        setCarsCount(0);
+      }
+    };
+    fetchCarsCount();
+  }, []);
 
   return (
     <>
@@ -16,7 +40,7 @@ export default function SearchSection() {
               Find Your Car
             </span>
             <span className="hidden text-[10px] font-black uppercase tracking-[0.15em] sm:block">
-              <span className="text-primary">128</span>
+              <span className="text-primary">{carsCount}</span>
               <span className="text-gray-400"> cars available</span>
             </span>
           </div>
@@ -64,17 +88,31 @@ export default function SearchSection() {
           </motion.div>
 
           <div className="flex flex-wrap items-center gap-1.5 px-6 pb-4 sm:px-8">
-            {["All Conditions", "New Cars", "Used Cars", "Certified"].map(
-              (filter) => (
+            {quickFilters.map((filter) => {
+              const condition =
+                filter === "New Cars"
+                  ? "New"
+                  : filter === "Used Cars"
+                    ? "Used"
+                    : filter === "Certified"
+                      ? "Certified"
+                      : "";
+              return (
                 <button
                   key={filter}
-                  onClick={() => setModalOpen(true)}
+                  onClick={() => {
+                    if (!condition) {
+                      router.push("/inventory");
+                      return;
+                    }
+                    router.push(`/inventory?condition=${encodeURIComponent(condition)}`);
+                  }}
                   className=" bg-gray-100 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-gray-500 transition-all duration-200 hover:bg-primary hover:text-white"
                 >
                   {filter}
                 </button>
-              ),
-            )}
+              );
+            })}
           </div>
         </div>
       </section>

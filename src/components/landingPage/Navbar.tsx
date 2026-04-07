@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   MapPin,
   Phone,
@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 
 const navLinks = [
-  { label: "Home", href: "#" },
-  { label: "Inventory", href: "#" },
-  { label: "About", href: "#" },
-  { label: "Dealers", href: "#" },
+  { label: "Home", href: "/" },
+  { label: "Inventory", href: "/inventory" },
+  { label: "About", href: "/#about" },
+  { label: "Dealers", href: "/#dealers" },
 ];
 
 type NavbarProps = {
@@ -28,11 +28,21 @@ type NavbarProps = {
 
 export default function Navbar({ user }: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [active, setActive] = useState("Home");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  const isLinkActive = (href: string) => {
+    if (href === "/") {
+      return pathname === "/";
+    }
+    if (href === "/inventory") {
+      return pathname === "/inventory" || pathname.startsWith("/inventory/");
+    }
+    return false;
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 80);
@@ -124,11 +134,11 @@ export default function Navbar({ user }: NavbarProps) {
           {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1 flex-1 justify-center">
             {navLinks.map((link) => {
-              const isActive = active === link.label;
+              const isActive = isLinkActive(link.href);
               return (
-                <button
+                <Link
                   key={link.label}
-                  onClick={() => setActive(link.label)}
+                  href={link.href}
                   className={`relative px-4 py-2 text-sm font-semibold rounded transition-all duration-200 ${
                     isActive
                       ? "text-primary"
@@ -144,7 +154,7 @@ export default function Navbar({ user }: NavbarProps) {
                       className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary rounded-full"
                     />
                   )}
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -254,14 +264,14 @@ export default function Navbar({ user }: NavbarProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-60"
             />
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-full w-72 bg-white z-[70] flex flex-col shadow-2xl"
+              className="fixed top-0 left-0 h-full w-72 bg-white z-70 flex flex-col shadow-2xl"
             >
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-line">
@@ -295,29 +305,32 @@ export default function Navbar({ user }: NavbarProps) {
                   Menu
                 </p>
                 {navLinks.map((link, i) => {
-                  const isActive = active === link.label;
+                  const isActive = isLinkActive(link.href);
                   return (
-                    <motion.button
+                    <motion.div
                       key={link.label}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.07 }}
-                      onClick={() => {
-                        setActive(link.label);
-                        setMenuOpen(false);
-                      }}
-                      className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
-                        isActive
-                          ? "bg-primary text-white shadow-md"
-                          : "text-gray-dark hover:bg-subtle hover:text-primary"
-                      }`}
                     >
-                      <span>{link.label}</span>
-                      <ChevronRight
-                        size={16}
-                        className={isActive ? "text-white/70" : "text-gray-mid"}
-                      />
-                    </motion.button>
+                      <Link
+                        href={link.href}
+                        onClick={() => {
+                          setMenuOpen(false);
+                        }}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                          isActive
+                            ? "bg-primary text-white shadow-md"
+                            : "text-gray-dark hover:bg-subtle hover:text-primary"
+                        }`}
+                      >
+                        <span>{link.label}</span>
+                        <ChevronRight
+                          size={16}
+                          className={isActive ? "text-white/70" : "text-gray-mid"}
+                        />
+                      </Link>
+                    </motion.div>
                   );
                 })}
 

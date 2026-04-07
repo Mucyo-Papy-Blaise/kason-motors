@@ -52,41 +52,11 @@ const menuGroups = [
         icon: Plus,
         badge: "New",
       },
-      {
-        label: "Featured",
-        href: "/admin/listings/featured",
-        icon: Star,
-        badge: null,
-      },
-    ],
-  },
-  {
-    label: "Insights",
-    items: [
-      {
-        label: "Performance",
-        href: "/admin/analytics",
-        icon: BarChart2,
-        badge: null,
-      },
-      {
-        label: "Inventory",
-        href: "/admin/inventory",
-        icon: Gauge,
-        badge: null,
-      },
-      { label: "Views & Leads", href: "/admin/views", icon: Eye, badge: null },
     ],
   },
   {
     label: "System",
     items: [
-      {
-        label: "Maintenance",
-        href: "/admin/maintenance",
-        icon: Wrench,
-        badge: null,
-      },
       {
         label: "Notifications",
         href: "/admin/notifications",
@@ -99,7 +69,6 @@ const menuGroups = [
         icon: Settings,
         badge: null,
       },
-      { label: "Help", href: "/admin/support", icon: HelpCircle, badge: null },
     ],
   },
 ];
@@ -207,7 +176,7 @@ const isActive = pathname === item.href;
                         key={item.label}
                         href={item.href}
                         title={collapsed ? item.label : undefined}
-                        className={`flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 group
+                        className={`flex items-center gap-3 px-2.5 py-2.5 text-[13px] font-medium transition-all duration-150 group
                           ${
                             isActive
                               ? "bg-primary text-white"

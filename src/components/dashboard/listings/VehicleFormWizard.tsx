@@ -1,0 +1,428 @@
+"use client";
+
+import VehicleImageUploader from "@/components/dashboard/listings/VehicleImageUploader";
+import {
+  BADGE_OPTIONS,
+  BODY_TYPE_OPTIONS,
+  BRAND_OPTIONS,
+  CONDITION_OPTIONS,
+  DOOR_OPTIONS,
+  DRIVE_TYPE_OPTIONS,
+  EXTERIOR_COLOR_OPTIONS,
+  FEATURE_OPTIONS,
+  FUEL_OPTIONS,
+  INTERIOR_COLOR_OPTIONS,
+  SEAT_OPTIONS,
+  TRANSMISSION_OPTIONS,
+} from "@/components/dashboard/listings/vehicleFormOptions";
+import { uploadVehicleImages, uploadVehicleVideo } from "@/lib/uploadVehicleImages";
+import { VehicleFormData, vehicleFormSchema } from "@/lib/vehicleFormSchema";
+import { EMPTY_FORM, FormErrors } from "@/types/car";
+import { useMemo, useRef, useState } from "react";
+
+type VehicleFormWizardProps = {
+  initialData?: Partial<VehicleFormData>;
+  submitLabel: string;
+  loadingLabel: string;
+  onSubmit: (payload: VehicleFormData) => Promise<void>;
+};
+
+const STEPS = ["Basic", "Technical", "Appearance", "Pricing & Media"] as const;
+
+type SelectFieldProps = {
+  label: string;
+  name: keyof VehicleFormData;
+  value: string | undefined;
+  options: readonly string[];
+  error?: string;
+  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+};
+
+const REQUIRED_FIELDS_BY_STEP: Record<number, (keyof VehicleFormData)[]> = {
+  0: ["title", "brand", "model", "year", "condition", "bodyType"],
+  1: ["mileage", "engineSize", "fuel", "transmission", "driveType"],
+  2: [],
+  3: ["price", "description", "image", "imageUrls"],
+};
+
+function SelectField({ label, name, value, options, error, onChange }: SelectFieldProps) {
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">{label}</label>
+      <div className="relative">
+        <select
+          name={name}
+          value={value ?? ""}
+          onChange={onChange}
+          className={`w-full bg-white border rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 shadow-sm appearance-none cursor-pointer ${
+            error ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-primary hover:border-primary/50"
+          }`}
+        >
+          <option value="">{`Select ${label}`}</option>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+      {error ? <p className="mt-1.5 text-xs text-red-500">{error}</p> : null}
+    </div>
+  );
+}
+
+export default function VehicleFormWizard({
+  initialData,
+  submitLabel,
+  loadingLabel,
+  onSubmit,
+}: VehicleFormWizardProps) {
+  const submitRequestedRef = useRef(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [form, setForm] = useState<VehicleFormData>({
+    ...EMPTY_FORM,
+    ...initialData,
+    negotiable: initialData?.negotiable ?? false,
+    features: initialData?.features ?? [],
+    imageUrls: initialData?.imageUrls ?? [],
+  } as VehicleFormData);
+  const [selectedImages, setSelectedImages] = useState<string[]>(initialData?.imageUrls ?? []);
+  const [selectedVideo, setSelectedVideo] = useState<string>(initialData?.videoUrl ?? "");
+  const [selectedVideoName, setSelectedVideoName] = useState<string>(
+    initialData?.videoUrl ? "Current uploaded video" : ""
+  );
+  const canPreviewVideo = selectedVideo.startsWith("data:video/") || selectedVideo.startsWith("http");
+  const selectedFeatures = form.features ?? [];
+
+  const inputClass = (field: keyof VehicleFormData) =>
+    `w-full bg-white border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 shadow-sm ${
+      errors[field as keyof FormErrors] ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-primary hover:border-primary/50"
+    }`;
+
+  const canGoNext = useMemo(() => currentStep < STEPS.length - 1, [currentStep]);
+  const canGoBack = useMemo(() => currentStep > 0, [currentStep]);
+
+  const validateField = (name: keyof VehicleFormData, value: VehicleFormData[keyof VehicleFormData]) => {
+    const result = vehicleFormSchema.safeParse({ ...form, [name]: value });
+    const message = !result.success ? result.error.flatten().fieldErrors[name]?.[0] : undefined;
+    setErrors((prev) => ({ ...prev, [name]: message }));
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    if (submitted) {
+      validateField(name as keyof VehicleFormData, value);
+    }
+  };
+
+  const handleToggleFeature = (feature: string) => {
+    setForm((prev) => {
+      const featuresList = prev.features ?? [];
+      const hasFeature = featuresList.includes(feature);
+      const features = hasFeature
+        ? featuresList.filter((item) => item !== feature)
+        : [...featuresList, feature];
+      return { ...prev, features };
+    });
+  };
+
+  const handleImagesChange = (images: string[]) => {
+    setSelectedImages(images);
+    setForm((prev) => ({
+      ...prev,
+      image: images[0] ?? "",
+      imageUrls: images,
+    }));
+
+    if (submitted) {
+      validateField("image", images[0] ?? "");
+      validateField("imageUrls", images);
+    }
+  };
+
+  const handleVideoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const base64Video = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => reject(new Error("Failed to read selected video"));
+      reader.readAsDataURL(file);
+    });
+
+    setSelectedVideo(base64Video);
+    setSelectedVideoName(file.name);
+    setForm((prev) => ({ ...prev, videoUrl: base64Video }));
+    event.target.value = "";
+  };
+
+  const clearSelectedVideo = () => {
+    setSelectedVideo("");
+    setSelectedVideoName("");
+    setForm((prev) => ({ ...prev, videoUrl: "" }));
+  };
+
+  const validateCurrentStep = () => {
+    const fields = REQUIRED_FIELDS_BY_STEP[currentStep] ?? [];
+    if (fields.length === 0) {
+      return true;
+    }
+
+    const validationPayload = {
+      ...form,
+      image: selectedImages[0] ?? "",
+      imageUrls: selectedImages,
+    };
+    const result = vehicleFormSchema.safeParse(validationPayload);
+
+    const stepErrors: FormErrors = {};
+    for (const field of fields) {
+      const fieldMessage = !result.success ? result.error.flatten().fieldErrors[field]?.[0] : undefined;
+      if (fieldMessage) {
+        stepErrors[field as keyof FormErrors] = fieldMessage;
+      }
+    }
+
+    if (Object.keys(stepErrors).length > 0) {
+      setSubmitted(true);
+      setErrors((prev) => ({ ...prev, ...stepErrors }));
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleNextStep = () => {
+    if (!validateCurrentStep()) {
+      return;
+    }
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  const submitForm = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!submitRequestedRef.current) {
+      return;
+    }
+    submitRequestedRef.current = false;
+    setSubmitted(true);
+    const result = vehicleFormSchema.safeParse({ ...form, imageUrls: selectedImages, image: selectedImages[0] ?? "" });
+
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+      for (const [key, messages] of Object.entries(result.error.flatten().fieldErrors)) {
+        fieldErrors[key as keyof FormErrors] = messages?.[0];
+      }
+      setErrors(fieldErrors);
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const uploadedImages = await uploadVehicleImages(selectedImages);
+      const uploadedVideoUrl = selectedVideo ? await uploadVehicleVideo(selectedVideo) : "";
+      await onSubmit({
+        ...result.data,
+        image: uploadedImages[0] ?? "",
+        imageUrls: uploadedImages,
+        videoUrl: uploadedVideoUrl || form.videoUrl || "",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleFormKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    const target = event.target as HTMLElement;
+    const tagName = target.tagName.toLowerCase();
+    const isTextArea = tagName === "textarea";
+    if (event.key === "Enter" && !isTextArea) {
+      event.preventDefault();
+    }
+  };
+
+  return (
+    <form onSubmit={submitForm} onKeyDown={handleFormKeyDown} className="space-y-6">
+      <div className="flex items-center gap-2">
+        {STEPS.map((step, index) => (
+          <div key={step} className="flex items-center gap-2">
+            <div className={`h-7 w-7 rounded-full text-xs font-bold flex items-center justify-center ${index <= currentStep ? "bg-primary text-white" : "bg-gray-100 text-gray-400"}`}>
+              {index + 1}
+            </div>
+            <span className={`text-xs ${index <= currentStep ? "text-primary font-semibold" : "text-gray-400"}`}>{step}</span>
+            {index < STEPS.length - 1 ? <div className="w-5 h-px bg-gray-200" /> : null}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-500">
+        <span className="text-red-500 font-semibold">*</span> Required fields
+      </p>
+
+      {currentStep === 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Title <span className="text-red-500">*</span></label>
+            <input name="title" value={form.title} onChange={handleChange} className={inputClass("title")} />
+            {errors.title ? <p className="mt-1.5 text-xs text-red-500">{errors.title}</p> : null}
+          </div>
+          <SelectField label="Brand / Make *" name="brand" value={form.brand} options={BRAND_OPTIONS} error={errors.brand} onChange={handleChange} />
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Model <span className="text-red-500">*</span></label>
+            <input name="model" value={form.model} onChange={handleChange} className={inputClass("model")} />
+            {errors.model ? <p className="mt-1.5 text-xs text-red-500">{errors.model}</p> : null}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Year <span className="text-red-500">*</span></label>
+            <input name="year" value={form.year} onChange={handleChange} className={inputClass("year")} />
+            {errors.year ? <p className="mt-1.5 text-xs text-red-500">{errors.year}</p> : null}
+          </div>
+          <SelectField label="Condition *" name="condition" value={form.condition} options={CONDITION_OPTIONS} error={errors.condition} onChange={handleChange} />
+          <SelectField label="Body Type *" name="bodyType" value={form.bodyType} options={BODY_TYPE_OPTIONS} error={errors.bodyType} onChange={handleChange} />
+        </div>
+      ) : null}
+
+      {currentStep === 1 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Mileage (km) <span className="text-red-500">*</span></label>
+            <input name="mileage" value={form.mileage} onChange={handleChange} className={inputClass("mileage")} />
+            {errors.mileage ? <p className="mt-1.5 text-xs text-red-500">{errors.mileage}</p> : null}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Engine Size <span className="text-red-500">*</span></label>
+            <input name="engineSize" value={form.engineSize} onChange={handleChange} className={inputClass("engineSize")} placeholder="2.0L" />
+            {errors.engineSize ? <p className="mt-1.5 text-xs text-red-500">{errors.engineSize}</p> : null}
+          </div>
+          <SelectField label="Fuel Type *" name="fuel" value={form.fuel} options={FUEL_OPTIONS} error={errors.fuel} onChange={handleChange} />
+          <SelectField label="Transmission *" name="transmission" value={form.transmission} options={TRANSMISSION_OPTIONS} error={errors.transmission} onChange={handleChange} />
+          <SelectField label="Drive Type *" name="driveType" value={form.driveType} options={DRIVE_TYPE_OPTIONS} error={errors.driveType} onChange={handleChange} />
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Horsepower (Optional)</label>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              name="horsepower"
+              value={form.horsepower ?? ""}
+              onChange={handleChange}
+              className={inputClass("horsepower")}
+            />
+            {errors.horsepower ? <p className="mt-1.5 text-xs text-red-500">{errors.horsepower}</p> : null}
+          </div>
+        </div>
+      ) : null}
+
+      {currentStep === 2 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <SelectField label="Exterior Color (Optional)" name="exteriorColor" value={form.exteriorColor} options={EXTERIOR_COLOR_OPTIONS} error={errors.exteriorColor} onChange={handleChange} />
+          <SelectField label="Interior Color (Optional)" name="interiorColor" value={form.interiorColor} options={INTERIOR_COLOR_OPTIONS} error={errors.interiorColor} onChange={handleChange} />
+          <SelectField label="Doors (Optional)" name="doors" value={form.doors} options={DOOR_OPTIONS} error={errors.doors} onChange={handleChange} />
+          <SelectField label="Seats (Optional)" name="seats" value={form.seats} options={SEAT_OPTIONS} error={errors.seats} onChange={handleChange} />
+        </div>
+      ) : null}
+
+      {currentStep === 3 ? (
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Price <span className="text-red-500">*</span></label>
+              <input name="price" value={form.price} onChange={handleChange} className={inputClass("price")} />
+              {errors.price ? <p className="mt-1.5 text-xs text-red-500">{errors.price}</p> : null}
+            </div>
+            <SelectField label="Badge (Optional)" name="badge" value={form.badge ?? ""} options={BADGE_OPTIONS} error={errors.badge} onChange={handleChange} />
+          </div>
+          <label className="inline-flex items-center gap-2 text-sm text-gray-700">
+            <input type="checkbox" checked={form.negotiable} onChange={(event) => setForm((prev) => ({ ...prev, negotiable: event.target.checked }))} className="accent-primary" />
+            Negotiable
+          </label>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Description <span className="text-red-500">*</span></label>
+            <textarea name="description" value={form.description} onChange={handleChange} className={inputClass("description")} rows={4} />
+            {errors.description ? <p className="mt-1.5 text-xs text-red-500">{errors.description}</p> : null}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Video (Optional)</label>
+            <input type="file" accept="video/*" onChange={handleVideoChange} className={inputClass("videoUrl")} />
+            {selectedVideoName ? (
+              <div className="mt-2 space-y-2">
+                <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-600">
+                  <span className="truncate">{selectedVideoName}</span>
+                  <button type="button" onClick={clearSelectedVideo} className="text-red-500 font-semibold">
+                    Remove
+                  </button>
+                </div>
+                {canPreviewVideo ? (
+                  <div className="rounded-lg border border-gray-200 overflow-hidden bg-black/5">
+                    <video
+                      controls
+                      preload="metadata"
+                      className="w-full max-h-64 bg-black"
+                      src={selectedVideo}
+                    />
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+          <VehicleImageUploader label="Vehicle Images *" value={selectedImages} error={errors.image} onChange={handleImagesChange} />
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Features & Extras (Optional)</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {FEATURE_OPTIONS.map((feature) => (
+                <label key={feature} className="inline-flex items-center gap-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={selectedFeatures.includes(feature)}
+                    onChange={() => handleToggleFeature(feature)}
+                    className="accent-primary"
+                  />
+                  {feature}
+                </label>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      <div className="flex items-center justify-between gap-3 pt-2">
+        <button
+          type="button"
+          onClick={() => canGoBack && setCurrentStep((prev) => prev - 1)}
+          disabled={!canGoBack || isSubmitting}
+          className="px-4 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 disabled:opacity-40"
+        >
+          Back
+        </button>
+        {canGoNext ? (
+          <button
+            type="button"
+            onClick={handleNextStep}
+            disabled={isSubmitting}
+            className="px-4 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold"
+          >
+            Next
+          </button>
+        ) : (
+          <button
+            type="submit"
+            onClick={() => {
+              submitRequestedRef.current = true;
+            }}
+            disabled={isSubmitting}
+            className="px-4 py-2.5 rounded-lg bg-primary text-white text-sm font-semibold disabled:opacity-70"
+          >
+            {isSubmitting ? loadingLabel : submitLabel}
+          </button>
+        )}
+      </div>
+    </form>
+  );
+}
