@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   X,
@@ -7,7 +8,6 @@ import {
   SlidersHorizontal,
   RotateCcw,
   ChevronDown,
-  MapPin,
   Car,
   DollarSign,
   Gauge,
@@ -16,68 +16,13 @@ import {
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const filters = ["All Conditions", "New Cars", "Used Cars", "Certified"];
-
-const makes = [
-  "All Makes",
-  "Toyota",
-  "BMW",
-  "Mercedes-Benz",
-  "Porsche",
-  "Land Rover",
-  "Audi",
-  "Lexus",
-  "Ford",
-  "Honda",
-];
-const models: Record<string, string[]> = {
-  "All Makes": ["All Models"],
-  Toyota: ["All Models", "Land Cruiser", "Camry", "RAV4", "Hilux", "Prado"],
-  BMW: ["All Models", "X5", "X3", "3 Series", "5 Series", "M4"],
-  "Mercedes-Benz": [
-    "All Models",
-    "GLE",
-    "C-Class",
-    "E-Class",
-    "GLC",
-    "S-Class",
-  ],
-  Porsche: ["All Models", "Cayenne", "Macan", "Panamera", "911", "Taycan"],
-  "Land Rover": [
-    "All Models",
-    "Defender",
-    "Discovery",
-    "Range Rover",
-    "Freelander",
-  ],
-  Audi: ["All Models", "Q7", "Q5", "A4", "A6", "RS6"],
-  Lexus: ["All Models", "LX", "RX", "NX", "IS", "GX"],
-  Ford: ["All Models", "Explorer", "Ranger", "Mustang", "F-150"],
-  Honda: ["All Models", "CR-V", "Accord", "Civic", "Pilot"],
-};
 const priceRanges = [
   "All Prices",
-  "Under $300/mo",
-  "$300–$500/mo",
-  "$500–$800/mo",
-  "$800–$1200/mo",
-  "Above $1200/mo",
-];
-const locations = [
-  "All Locations",
-  "Kigali",
-  "Nairobi",
-  "Kampala",
-  "Dar es Salaam",
-  "Mombasa",
-];
-const years = [
-  "All Years",
-  "2024",
-  "2023",
-  "2022",
-  "2021",
-  "2020",
-  "2019 & older",
+  "Under 300,000 RWF",
+  "300,000–500,000 RWF",
+  "500,000–800,000 RWF",
+  "800,000–1,200,000 RWF",
+  "Above 1,200,000 RWF",
 ];
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -86,8 +31,8 @@ interface SearchState {
   filter: string;
   make: string;
   model: string;
+  bodyType: string;
   price: string;
-  location: string;
   year: string;
 }
 
@@ -97,6 +42,15 @@ interface SearchModalProps {
   initialField?: string;
   onSearch?: (state: SearchState) => void;
 }
+
+type SearchVehicle = {
+  id: number;
+  brand?: string;
+  model?: string;
+  condition?: string;
+  body_type?: string;
+  year?: number | string;
+};
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
@@ -176,18 +130,41 @@ export default function SearchModal({
   initialField,
   onSearch,
 }: SearchModalProps) {
+  const router = useRouter();
   const [search, setSearch] = useState<SearchState>({
     filter: "All Conditions",
     make: "All Makes",
     model: "All Models",
+    bodyType: "All Body Types",
     price: "All Prices",
-    location: "All Locations",
     year: "All Years",
   });
   const [activeField, setActiveField] = useState<string>(
     initialField ?? "make",
   );
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [carsCount, setCarsCount] = useState(0);
+  const [allCars, setAllCars] = useState<SearchVehicle[]>([]);
+
+  useEffect(() => {
+    const fetchSearchData = async () => {
+      try {
+        const response = await fetch("/api/vehicles/getList");
+        const result = await response.json();
+        if (!response.ok || !result.success || !Array.isArray(result.data)) {
+          setAllCars([]);
+          setCarsCount(0);
+          return;
+        }
+        setAllCars(result.data as SearchVehicle[]);
+        setCarsCount(result.data.length);
+      } catch {
+        setAllCars([]);
+        setCarsCount(0);
+      }
+    };
+    fetchSearchData();
+  }, []);
 
   // Lock body scroll
   useEffect(() => {
@@ -202,8 +179,8 @@ export default function SearchModal({
       filter: "All Conditions",
       make: "All Makes",
       model: "All Models",
+      bodyType: "All Body Types",
       price: "All Prices",
-      location: "All Locations",
       year: "All Years",
     });
     setShowAdvanced(false);
@@ -211,17 +188,108 @@ export default function SearchModal({
 
   const handleSearch = () => {
     onSearch?.(search);
+    const params = new URLSearchParams();
+    if (search.make !== "All Makes") {
+      params.set("brand", search.make);
+    }
+    if (search.model !== "All Models") {
+      params.set("model", search.model);
+    }
+    if (search.bodyType !== "All Body Types") {
+      params.set("bodyType", search.bodyType);
+    }
+    if (search.filter !== "All Conditions") {
+      const condition =
+        search.filter === "New Cars"
+          ? "New"
+          : search.filter === "Used Cars"
+            ? "Used"
+            : search.filter === "Certified"
+              ? "Certified"
+              : "";
+      if (condition) {
+        params.set("condition", condition);
+      }
+    }
+    if (search.year !== "All Years") {
+      if (search.year === "2019 & older") {
+        params.set("maxYear", "2019");
+      } else {
+        params.set("year", search.year);
+      }
+    }
+    if (search.price !== "All Prices") {
+      const maxPriceByLabel: Record<string, number> = {
+        "Under 300,000 RWF": 300000,
+        "300,000–500,000 RWF": 500000,
+        "500,000–800,000 RWF": 800000,
+        "800,000–1,200,000 RWF": 1200000,
+      };
+      if (maxPriceByLabel[search.price]) {
+        params.set("maxPrice", String(maxPriceByLabel[search.price]));
+      }
+    }
+    router.push(`/inventory${params.toString() ? `?${params.toString()}` : ""}`);
     onClose();
   };
 
-  const availableModels = models[search.make] ?? ["All Models"];
+  const makeOptions = [
+    "All Makes",
+    ...Array.from(
+      new Set(
+        allCars
+          .map((car) => (car.brand || "").trim())
+          .filter((brand) => brand.length > 0),
+      ),
+    ).sort((a, b) => a.localeCompare(b)),
+  ];
+
+  const availableModels = [
+    "All Models",
+    ...Array.from(
+      new Set(
+        allCars
+          .filter((car) =>
+            search.make === "All Makes"
+              ? true
+              : (car.brand || "").trim().toLowerCase() === search.make.toLowerCase(),
+          )
+          .map((car) => (car.model || "").trim())
+          .filter((model) => model.length > 0),
+      ),
+    ).sort((a, b) => a.localeCompare(b)),
+  ];
+
+  const bodyTypeOptions = [
+    "All Body Types",
+    ...Array.from(
+      new Set(
+        allCars
+          .map((car) => (car.body_type || "").trim())
+          .filter((type) => type.length > 0),
+      ),
+    ).sort((a, b) => a.localeCompare(b)),
+  ];
+
+  const yearOptions = [
+    "All Years",
+    ...Array.from(
+      new Set(
+        allCars
+          .map((car) => String(car.year ?? "").trim())
+          .filter((year) => year.length > 0 && year !== "0"),
+      ),
+    )
+      .sort((a, b) => Number(b) - Number(a)),
+    "2019 & older",
+  ];
 
   // Count active filters
   const activeCount = [
     search.make !== "All Makes",
     search.model !== "All Models",
+    search.bodyType !== "All Body Types",
     search.price !== "All Prices",
-    search.location !== "All Locations",
     search.filter !== "All Conditions",
     search.year !== "All Years",
   ].filter(Boolean).length;
@@ -276,7 +344,7 @@ export default function SearchModal({
                   <p className="text-xs text-gray-400 font-medium">
                     {activeCount > 0
                       ? `${activeCount} filter${activeCount > 1 ? "s" : ""} applied`
-                      : "128 cars available"}
+                      : `${carsCount} cars available`}
                   </p>
                 </div>
               </div>
@@ -317,7 +385,7 @@ export default function SearchModal({
                   label="Make"
                   icon={Car}
                   value={search.make}
-                  options={makes}
+                  options={makeOptions}
                   onChange={(v) =>
                     setSearch((p) => ({ ...p, make: v, model: "All Models" }))
                   }
@@ -334,22 +402,13 @@ export default function SearchModal({
                   onFocus={() => setActiveField("model")}
                 />
                 <SelectField
-                  label="Price"
-                  icon={DollarSign}
-                  value={search.price}
-                  options={priceRanges}
-                  onChange={(v) => setSearch((p) => ({ ...p, price: v }))}
-                  active={activeField === "price"}
-                  onFocus={() => setActiveField("price")}
-                />
-                <SelectField
-                  label="Location"
-                  icon={MapPin}
-                  value={search.location}
-                  options={locations}
-                  onChange={(v) => setSearch((p) => ({ ...p, location: v }))}
-                  active={activeField === "location"}
-                  onFocus={() => setActiveField("location")}
+                  label="Body Type"
+                  icon={Car}
+                  value={search.bodyType}
+                  options={bodyTypeOptions}
+                  onChange={(v) => setSearch((p) => ({ ...p, bodyType: v }))}
+                  active={activeField === "bodyType"}
+                  onFocus={() => setActiveField("bodyType")}
                 />
               </div>
 
@@ -368,10 +427,19 @@ export default function SearchModal({
                         label="Year"
                         icon={Car}
                         value={search.year}
-                        options={years}
+                        options={yearOptions}
                         onChange={(v) => setSearch((p) => ({ ...p, year: v }))}
                         active={activeField === "year"}
                         onFocus={() => setActiveField("year")}
+                      />
+                      <SelectField
+                        label="Price"
+                        icon={DollarSign}
+                        value={search.price}
+                        options={priceRanges}
+                        onChange={(v) => setSearch((p) => ({ ...p, price: v }))}
+                        active={activeField === "price"}
+                        onFocus={() => setActiveField("price")}
                       />
                     </div>
                   </motion.div>
