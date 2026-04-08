@@ -88,12 +88,13 @@ export type Database = {
         Relationships: [];
       };
 
-      // ✅ CONTACT / MESSAGES TABLE
+      // ✅ CONTACT / MESSAGES TABLE (phonenumber added)
       messages: {
         Row: {
           id: number;
           name: string;
           email: string;
+          phonenumber: string | null;
           message: string;
           created_at: string;
           read: boolean;
@@ -102,6 +103,7 @@ export type Database = {
           id?: number;
           name: string;
           email: string;
+          phonenumber?: string | null;
           message: string;
           created_at?: string;
           read: boolean;
@@ -110,9 +112,10 @@ export type Database = {
           id?: number;
           name?: string;
           email?: string;
+          phonenumber?: string | null;
           message?: string;
           created_at?: string;
-          read: boolean;
+          read?: boolean;
         };
         Relationships: [];
       };
