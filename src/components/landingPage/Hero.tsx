@@ -87,7 +87,7 @@ export default function Hero() {
         );
 
         sorted.forEach((car) => {
-          const brandKey = (car.brand || "").trim();
+          const brandKey = (car?.brand || "").trim();
           if (!brandKey) return;
           if (!byBrand.has(brandKey)) {
             byBrand.set(brandKey, car);
@@ -97,22 +97,22 @@ export default function Hero() {
         const liveSlides: HeroSlide[] = Array.from(byBrand.values())
           .slice(0, 8)
           .map((car) => {
-            const brand = car.brand?.toUpperCase() || "FEATURED";
+            const brand = car?.brand?.toUpperCase() || "FEATURED";
             const name =
               car.title ||
-              `${car.brand || ""} ${car.model || ""} ${car.year || ""}`.trim() ||
+              `${car?.brand || ""} ${car?.model || ""} ${car?.year || ""}`.trim() ||
               "Featured Vehicle";
-            const details = [car.year, car.body_type, car.fuel]
+            const details = [car?.year, car?.body_type, car.fuel]
               .filter(Boolean)
               .join(" · ");
             return {
               id: car.id,
               title: `${brand} COLLECTION`,
               car: name.toUpperCase(),
-              price: `${Number(car.price || 0).toLocaleString()} RWF`,
+              price: `${Number(car?.price || 0).toLocaleString()} RWF`,
               period: "",
               description: details || "Explore premium vehicles now available.",
-              image: car.image_urls?.[0] || car.image || fallbackSlides[0].image,
+              image: car?.image_urls?.[0] || car?.image || fallbackSlides[0].image,
             };
           });
 
@@ -176,21 +176,21 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-primary-light">
-            {slide.title}
+            {slide?.title}
           </p>
           <h1 className="mb-4 text-5xl leading-none font-bold tracking-tight text-white md:text-7xl lg:text-8xl">
-            {slide.car}
+            {slide?.car}
           </h1>
           <div className="mb-3 flex items-baseline gap-2">
             <span
               className="text-4xl font-bold text-primary-light"
             >
-              {slide.price}
+              {slide?.price}
             </span>
-            <span className="text-lg text-white/70">{slide.period}</span>
+            <span className="text-lg text-white/70">{slide?.period}</span>
           </div>
           <p className="mb-8 max-w-sm text-sm text-white/60">
-            {slide.description}
+            {slide?.description}
           </p>
         </motion.div>
 
@@ -202,7 +202,7 @@ export default function Hero() {
               className={`h-1 rounded-full transition-all duration-500 ${
                 index === current ? "w-8 bg-primary-light" : "w-3 bg-white/40"
               }`}
-              aria-label={`Show ${item.car}`}
+              aria-label={`Show ${item?.car}`}
             />
           ))}
         </div>

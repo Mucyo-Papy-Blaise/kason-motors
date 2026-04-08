@@ -114,7 +114,7 @@ export default function CarDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-subtle flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="h-10 w-10 rounded-full border-2 border-primary/20 border-t-primary animate-spin" />
       </div>
     );
@@ -122,8 +122,8 @@ export default function CarDetailPage() {
 
   if (error || !car) {
     return (
-      <div className="min-h-screen bg-subtle flex flex-col items-center justify-center gap-3">
-        <p className="text-red-500">{error || "Vehicle not found"}</p>
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center gap-3 text-font">
+        <p className="text-primary">{error || "Vehicle not found"}</p>
         <Link
           href="/inventory"
           className="text-primary font-semibold hover:underline"
@@ -135,21 +135,21 @@ export default function CarDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-subtle font-sans">
+    <div className="min-h-screen bg-bg font-sans text-font">
       <Navbar />
-      <div className="bg-surface border-b border-line px-6 md:px-32 py-3 text-sm text-gray-mid">
+      <div className="bg-gray-dark border-b border-line/25 px-6 md:px-32 py-3 text-sm text-gray-mid">
         <Link href="/" className="hover:text-primary transition-colors">
           Home
         </Link>
-        <span className="mx-2 text-black">/</span>
+        <span className="mx-2 text-gray-mid">/</span>
         <Link
           href="/inventory"
           className="hover:text-primary transition-colors"
         >
           Cars
         </Link>
-        <span className="mx-2 text-black">/</span>
-        <span className="text-ink font-medium">{carTitle}</span>
+        <span className="mx-2 text-gray-mid">/</span>
+        <span className="text-font font-medium">{carTitle}</span>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8 lg:px-8">
@@ -173,7 +173,7 @@ export default function CarDetailPage() {
                   </span>
                 ) : null}
               </div>
-              <h1 className="text-3xl font-bold text-ink tracking-tight">
+              <h1 className="text-3xl font-bold text-font tracking-tight">
                 {carTitle}
               </h1>
               <p className="text-gray-mid mt-1">
@@ -181,7 +181,7 @@ export default function CarDetailPage() {
               </p>
             </div>
 
-            <div className="relative bg-surface overflow-hidden border border-line shadow-sm aspect-[16/9]">
+            <div className="relative bg-gray-dark overflow-hidden border border-line/25 shadow-sm aspect-[16/9]">
               {imageUrls[activeImage] ? (
                 <Image
                   src={imageUrls[activeImage]}
@@ -221,7 +221,7 @@ export default function CarDetailPage() {
               {specs.map((spec) => (
                 <div
                   key={spec.label}
-                  className="bg-surface border border-line px-4 py-3 flex items-center gap-3"
+                  className="bg-gray-dark border border-line/25 px-4 py-3 flex items-center gap-3"
                 >
                   <div className="w-9 h-9 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <svg
@@ -242,7 +242,7 @@ export default function CarDetailPage() {
                     <p className="text-xs text-gray-mid leading-none mb-0.5">
                       {spec.label}
                     </p>
-                    <p className="text-sm font-semibold text-ink">
+                    <p className="text-sm font-semibold text-font">
                       {spec.value}
                     </p>
                   </div>
@@ -253,15 +253,15 @@ export default function CarDetailPage() {
 
           <div className="lg:col-span-2">
             <div className="sticky top-6 space-y-4">
-              <div className="bg-surface border border-line p-6">
-                <h2 className="text-lg font-bold text-ink mb-3">
+              <div className="bg-gray-dark border border-line/25 p-6">
+                <h2 className="text-lg font-bold text-font mb-3">
                   About this Car
                 </h2>
                 <p className="text-gray-mid leading-relaxed text-sm">
                   {car.description || "-"}
                 </p>
               </div>
-              <div className="bg-surface border border-line p-6 shadow-sm">
+              <div className="bg-gray-dark border border-line/25 p-6 shadow-sm">
                 <p className="text-xs text-gray-mid uppercase tracking-widest mb-1">
                   Listed Price
                 </p>
@@ -271,7 +271,7 @@ export default function CarDetailPage() {
                   </span>
                 </div>
                 <div className="space-y-3 mt-4">
-                  <button className="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-2 transition-colors duration-200 text-sm tracking-wide">
+                  <button className="w-full bg-primary hover:bg-primary-dark text-font font-semibold py-2 transition-colors duration-200 text-sm tracking-wide">
                     Contact Seller
                   </button>
                 </div>
@@ -281,17 +281,17 @@ export default function CarDetailPage() {
                     <input
                       type="text"
                       placeholder="Your name"
-                      className="w-full border border-line px-3 py-2.5 text-sm"
+                      className="w-full border border-line/30 bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid"
                     />
                     <input
                       type="tel"
                       placeholder="Phone number"
-                      className="w-full border border-line  px-3 py-2.5 text-sm"
+                      className="w-full border border-line/30 bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid"
                     />
                     <textarea
                       rows={3}
                       placeholder="Your message…"
-                      className="w-full border border-line px-3 py-2.5 text-sm resize-none"
+                      className="w-full border border-line/30 bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid resize-none"
                     />
                     <button className="w-full bg-accent text-primary-dark font-semibold py-2.5 text-sm">
                       Submit Inquiry

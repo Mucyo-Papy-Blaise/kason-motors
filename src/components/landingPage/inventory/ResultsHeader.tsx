@@ -20,21 +20,21 @@ export const ResultsHeader: React.FC<ResultsHeaderProps> = ({
   onSortChange,
 }) => {
   return (
-    <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-gray-500">
-        <span className="font-bold text-gray-900">{count}</span> results
+    <div className="mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-center sm:justify-between">
+      <p className="shrink-0 text-sm text-gray-mid">
+        <span className="font-bold text-font">{count}</span> results
       </p>
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch sm:justify-end">
         <input
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Search by title, brand, model..."
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 sm:w-72"
+          className="min-h-[44px] w-full min-w-0 rounded-lg border border-line/30 bg-gray-dark px-3 py-2.5 text-base text-font placeholder:text-gray-mid focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 sm:min-h-0 sm:max-w-md sm:flex-1 sm:py-2 sm:text-sm lg:w-72 lg:flex-none"
         />
         <select
           value={sort}
           onChange={(event) => onSortChange(event.target.value)}
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="min-h-[44px] w-full shrink-0 rounded-lg border border-line/30 bg-gray-dark px-3 py-2.5 text-base text-font focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 sm:min-h-0 sm:w-auto sm:min-w-[11rem] sm:py-2 sm:text-sm"
         >
           {SORT_OPTIONS.map((option) => (
             <option key={option} value={option}>

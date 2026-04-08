@@ -39,7 +39,6 @@ export type Database = {
         Relationships: [];
       };
 
-      // ✅ ADD THIS BLOCK
       cars: {
         Row: {
           id: number;
@@ -85,6 +84,35 @@ export type Database = {
           badge?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+
+      // ✅ CONTACT / MESSAGES TABLE
+      messages: {
+        Row: {
+          id: number;
+          name: string;
+          email: string;
+          message: string;
+          created_at: string;
+          read: boolean;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+          email: string;
+          message: string;
+          created_at?: string;
+          read: boolean;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+          email?: string;
+          message?: string;
+          created_at?: string;
+          read: boolean;
         };
         Relationships: [];
       };

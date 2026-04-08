@@ -75,19 +75,19 @@ function SelectField({
     <div
       className={`relative flex flex-col gap-1.5 p-3 sm:p-4 rounded-xl border-2 transition-all duration-200 cursor-pointer group ${
         active
-          ? "border-primary bg-primary/5 shadow-sm"
-          : "border-gray-100 hover:border-gray-200 bg-gray-50/60"
+          ? "border-primary bg-primary/10 shadow-sm"
+          : "border-line/25 hover:border-line/50 bg-bg/80"
       }`}
       onClick={onFocus}
     >
       <div className="flex items-center gap-2">
         <Icon
           size={13}
-          className={`shrink-0 transition-colors ${active ? "text-primary" : "text-gray-400"}`}
+          className={`shrink-0 transition-colors ${active ? "text-primary" : "text-gray-mid"}`}
         />
         <span
           className={`text-[10px] font-black tracking-[0.18em] uppercase transition-colors ${
-            active ? "text-primary" : "text-gray-400"
+            active ? "text-primary" : "text-gray-mid"
           }`}
         >
           {label}
@@ -98,7 +98,7 @@ function SelectField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={onFocus}
-          className="w-full bg-transparent text-sm font-semibold text-gray-800 appearance-none cursor-pointer focus:outline-none pr-4"
+          className="w-full bg-transparent text-sm font-semibold text-font appearance-none cursor-pointer focus:outline-none pr-4"
         >
           {options.map((opt) => (
             <option key={opt} value={opt}>
@@ -108,7 +108,7 @@ function SelectField({
         </select>
         <ChevronDown
           size={14}
-          className={`shrink-0 transition-all ${active ? "text-primary rotate-180" : "text-gray-300"}`}
+          className={`shrink-0 transition-all ${active ? "text-primary rotate-180" : "text-gray-mid"}`}
         />
       </div>
       {/* Active accent bar */}
@@ -305,7 +305,7 @@ export default function SearchModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[80]"
+            className="fixed inset-0 bg-ink/70 backdrop-blur-sm z-[80]"
           />
 
           {/* ── Modal Panel ──
@@ -317,7 +317,7 @@ export default function SearchModal({
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 28, stiffness: 260 }}
             className="
-              fixed z-[90] bg-white shadow-2xl overflow-hidden
+              fixed z-[90] bg-gray-dark text-font shadow-2xl overflow-hidden
               /* Mobile: bottom sheet */
               bottom-0 left-0 right-0 rounded-t-3xl
               /* Desktop: centered modal */
@@ -328,20 +328,20 @@ export default function SearchModal({
           >
             {/* ── Drag handle (mobile only) ── */}
             <div className="md:hidden flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 rounded-full bg-gray-200" />
+              <div className="w-10 h-1 rounded-full bg-line/40" />
             </div>
 
             {/* ── Header ── */}
-            <div className="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-gray-100">
+            <div className="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-line/25">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8  bg-primary/10 flex items-center justify-center">
                   <Search size={15} className="text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-gray-900 tracking-tight">
+                  <h2 className="text-sm font-black text-font tracking-tight">
                     Find Your Car
                   </h2>
-                  <p className="text-xs text-gray-400 font-medium">
+                  <p className="text-xs text-gray-mid font-medium">
                     {activeCount > 0
                       ? `${activeCount} filter${activeCount > 1 ? "s" : ""} applied`
                       : `${carsCount} cars available`}
@@ -350,15 +350,15 @@ export default function SearchModal({
               </div>
               <button
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                className="w-8 h-8 rounded-full bg-bg hover:bg-ink flex items-center justify-center transition-colors"
               >
-                <X size={15} className="text-gray-600" />
+                <X size={15} className="text-font" />
               </button>
             </div>
 
             {/* ── Filter Tabs ── */}
             <div className="px-5 sm:px-7 pt-4 pb-2">
-              <p className="text-[10px] font-black text-gray-400 tracking-[0.2em] uppercase mb-2.5">
+              <p className="text-[10px] font-black text-gray-mid tracking-[0.2em] uppercase mb-2.5">
                 I&apos;m Looking For
               </p>
               <div className="flex gap-1.5 flex-wrap">
@@ -368,8 +368,8 @@ export default function SearchModal({
                     onClick={() => setSearch((p) => ({ ...p, filter: f }))}
                     className={`relative px-3 py-1.5 text-[11px] font-bold tracking-wide uppercase transition-all duration-200 ${
                       search.filter === f
-                        ? "text-white bg-primary shadow-md shadow-primary/25"
-                        : "text-gray-500 bg-gray-100 hover:bg-gray-200 hover:text-gray-800"
+                        ? "text-font bg-primary shadow-md shadow-primary/25"
+                        : "text-gray-mid bg-bg hover:bg-ink hover:text-font"
                     }`}
                   >
                     {f}
@@ -448,11 +448,11 @@ export default function SearchModal({
             </div>
 
             {/* ── Footer ── */}
-            <div className="px-5 sm:px-7 py-4 border-t border-gray-100 bg-gray-50/70 flex items-center justify-between gap-3">
+            <div className="px-5 sm:px-7 py-4 border-t border-line/25 bg-bg/90 flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowAdvanced((p) => !p)}
-                  className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-primary uppercase tracking-widest transition-colors"
+                  className="flex items-center gap-1.5 text-xs font-bold text-gray-mid hover:text-primary uppercase tracking-widest transition-colors"
                 >
                   <SlidersHorizontal size={13} />
                   <span>{showAdvanced ? "Less" : "Advanced"}</span>
@@ -460,7 +460,7 @@ export default function SearchModal({
                 {activeCount > 0 && (
                   <button
                     onClick={handleReset}
-                    className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-red-500 uppercase tracking-widest transition-colors"
+                    className="flex items-center gap-1.5 text-xs font-bold text-gray-mid hover:text-accent uppercase tracking-widest transition-colors"
                   >
                     <RotateCcw size={12} />
                     Reset
@@ -472,12 +472,12 @@ export default function SearchModal({
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={handleSearch}
-                className="flex items-center gap-2 px-7 py-3 bg-primary text-white font-bold rounded-xl text-sm uppercase tracking-widest shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow"
+                className="flex items-center gap-2 px-7 py-3 bg-primary text-font font-bold rounded-xl text-sm uppercase tracking-widest shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow"
               >
                 <Search size={15} />
                 Search Cars
                 {activeCount > 0 && (
-                  <span className="ml-1 bg-white/20 text-white text-[10px] font-black rounded-full px-1.5 py-0.5">
+                  <span className="ml-1 bg-font/15 text-font text-[10px] font-black rounded-full px-1.5 py-0.5">
                     {activeCount}
                   </span>
                 )}
