@@ -12,9 +12,10 @@ import {
 import { CarCard } from "./Carcard";
 import { ResultsHeader } from "./ResultsHeader";
 import Navbar from "../Navbar";
-
-const INVENTORY_CACHE_KEY = "inventory-cars-cache-v1";
-const INVENTORY_CACHE_TTL_MS = 5 * 60 * 1000;
+import {
+  readVehicleListCache,
+  writeVehicleListCache,
+} from "@/lib/vehiclesListCache";
 
 export type InventoryCar = {
   id: number;
@@ -48,11 +49,6 @@ export type InventoryFilters = {
   badges: string[];
   negotiable: "all" | "yes" | "no";
   maxPrice: number;
-};
-
-type CachedInventoryPayload = {
-  data: InventoryCar[];
-  cachedAt: number;
 };
 
 export const CarListingPage: React.FC = () => {
@@ -121,35 +117,9 @@ export const CarListingPage: React.FC = () => {
   }, [maxPriceFromData, cars.length]);
 
   useEffect(() => {
-    const readCache = () => {
-      try {
-        const raw = sessionStorage.getItem(INVENTORY_CACHE_KEY);
-        if (!raw) {
-          return null;
-        }
-        const parsed = JSON.parse(raw) as CachedInventoryPayload;
-        const isFresh = Date.now() - parsed.cachedAt < INVENTORY_CACHE_TTL_MS;
-        return isFresh ? parsed.data : null;
-      } catch {
-        return null;
-      }
-    };
-
-    const writeCache = (nextCars: InventoryCar[]) => {
-      try {
-        const payload: CachedInventoryPayload = {
-          data: nextCars,
-          cachedAt: Date.now(),
-        };
-        sessionStorage.setItem(INVENTORY_CACHE_KEY, JSON.stringify(payload));
-      } catch {
-        // Ignore cache write errors.
-      }
-    };
-
     const fetchCars = async () => {
       try {
-        const cached = readCache();
+        const cached = readVehicleListCache<InventoryCar>();
         if (cached) {
           setCars(cached);
           setIsLoading(false);
@@ -159,7 +129,7 @@ export const CarListingPage: React.FC = () => {
         const result = await response.json();
         if (response.ok && result.success && Array.isArray(result.data)) {
           setCars(result.data);
-          writeCache(result.data);
+          writeVehicleListCache(result.data);
         } else {
           setCars([]);
         }
