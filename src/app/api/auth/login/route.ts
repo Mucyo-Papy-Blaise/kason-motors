@@ -11,17 +11,11 @@ import { getSupabaseServerClient } from "@/lib/supabase-server";
 import type { LoginRequestBody, LoginResponseBody } from "@/types/auth";
 
 const isValidLoginPayload = (value: unknown): value is LoginRequestBody => {
-  if (!value || typeof value !== "object") {
-    return false;
-  }
-
+  if (!value || typeof value !== "object") return false;
   const { email, password } = value as Record<string, unknown>;
-
   return (
-    typeof email === "string" &&
-    email.length > 0 &&
-    typeof password === "string" &&
-    password.length > 0
+    typeof email === "string" && email.length > 0 &&
+    typeof password === "string" && password.length > 0
   );
 };
 
@@ -31,7 +25,7 @@ export async function POST(request: Request) {
   if (!isValidLoginPayload(body)) {
     return NextResponse.json(
       { error: "Email and password are required." },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -44,7 +38,7 @@ export async function POST(request: Request) {
   if (error || !data.user) {
     return NextResponse.json(
       { error: "Invalid email or password." },
-      { status: 401 },
+      { status: 401 }
     );
   }
 
@@ -53,7 +47,7 @@ export async function POST(request: Request) {
   if (!profile) {
     return NextResponse.json(
       { error: "No profile found for this account." },
-      { status: 403 },
+      { status: 403 }
     );
   }
 
@@ -62,8 +56,8 @@ export async function POST(request: Request) {
     role: profile.role,
     sub: profile.id,
   });
-  const cookieStore = await cookies();
 
+  const cookieStore = await cookies();
   cookieStore.set(AUTH_COOKIE_NAME, token, {
     httpOnly: true,
     maxAge: AUTH_TOKEN_TTL_SECONDS,

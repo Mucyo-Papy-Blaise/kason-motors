@@ -6,17 +6,20 @@ import { Eye, EyeOff, Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import type { LoginResponseBody } from "@/types/auth";
+
 const isLoginResponseBody = (
   value: LoginResponseBody | { error?: string } | null,
 ): value is LoginResponseBody =>
   Boolean(
     value &&
-    typeof value === "object" &&
-    "token" in value &&
-    "user" in value &&
-    "expiresIn" in value,
+      typeof value === "object" &&
+      "token" in value &&
+      "user" in value &&
+      "expiresIn" in value,
   );
 
 export default function LoginPage() {
@@ -25,20 +28,16 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setErrorMessage("");
     setIsSubmitting(true);
 
     try {
       const response = await fetch("/api/auth/login", {
         body: JSON.stringify({ email, password }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         method: "POST",
       });
 
@@ -48,7 +47,7 @@ export default function LoginPage() {
         | null;
 
       if (!response.ok) {
-        setErrorMessage(
+        toast.error(
           responseBody && "error" in responseBody
             ? (responseBody.error ?? "Unable to login.")
             : "Unable to login.",
@@ -56,14 +55,25 @@ export default function LoginPage() {
         return;
       }
 
-      const nextUrl = searchParams.get("next");
-      const destination =
-        isLoginResponseBody(responseBody) && responseBody.user.role === "admin"
-          ? nextUrl || "/admin"
-          : "/unauthorized";
+      if (isLoginResponseBody(responseBody)) {
+        const role = responseBody.user.role;
+        const nextUrl = searchParams.get("next");
 
-      router.replace(destination);
-      router.refresh();
+        toast.success(
+          role === "admin" ? "Welcome back, Admin!" : "Welcome back!",
+        );
+
+        const destination =
+          role === "admin" ? nextUrl || "/admin" : nextUrl || "/";
+
+        // Small delay so the toast is visible before navigation
+        setTimeout(() => {
+          router.replace(destination);
+          router.refresh();
+        }, 800);
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -71,6 +81,8 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen w-full overflow-hidden">
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <Image
         src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&q=80"
         alt="Car"
@@ -95,6 +107,7 @@ export default function LoginPage() {
       />
 
       <div className="relative z-20 mx-auto flex min-h-screen w-full max-w-7xl flex-col justify-between px-4 py-10 sm:px-6">
+        {/* Nav */}
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image
@@ -109,18 +122,12 @@ export default function LoginPage() {
             </span>
           </Link>
           <div className="flex items-center gap-6 text-sm text-white/50">
-            <Link href="/" className="transition-colors hover:text-white">
-              Home
-            </Link>
-            <Link
-              href="/register"
-              className="transition-colors hover:text-white"
-            >
-              Join
-            </Link>
+            <Link href="/" className="transition-colors hover:text-white">Home</Link>
+            <Link href="/register" className="transition-colors hover:text-white">Join</Link>
           </div>
         </div>
 
+        {/* Form */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -141,10 +148,7 @@ export default function LoginPage() {
             </h1>
             <p className="mt-3 text-sm text-white/40">
               Don&apos;t have an account?{" "}
-              <Link
-                href="/register"
-                className="font-semibold text-primary hover:underline"
-              >
+              <Link href="/register" className="font-semibold text-primary hover:underline">
                 Register
               </Link>
             </p>
@@ -157,6 +161,7 @@ export default function LoginPage() {
             className="flex flex-col gap-4"
             onSubmit={handleSubmit}
           >
+            {/* Email */}
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-white/30">
                 Email
@@ -166,28 +171,25 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   placeholder="you@example.com"
+                  required
                   className="w-full py-3.5 pl-4 pr-11 text-sm text-white outline-none transition-all placeholder:text-white/20"
                   style={{
                     background: "rgba(255,255,255,0.07)",
                     border: "1px solid rgba(255,255,255,0.12)",
                   }}
-                  onChange={(event) => setEmail(event.target.value)}
-                  onFocus={(event) =>
-                    (event.currentTarget.style.border =
-                      "1px solid var(--primary)")
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.border = "1px solid var(--primary)")
                   }
-                  onBlur={(event) =>
-                    (event.currentTarget.style.border =
-                      "1px solid rgba(255,255,255,0.12)")
+                  onBlur={(e) =>
+                    (e.currentTarget.style.border = "1px solid rgba(255,255,255,0.12)")
                   }
                 />
-                <Mail
-                  size={16}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/25"
-                />
+                <Mail size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-white/25" />
               </div>
             </div>
 
+            {/* Password */}
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-white/30">
                 Password
@@ -196,20 +198,19 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  placeholder="........"
+                  placeholder="••••••••"
+                  required
                   className="w-full py-3.5 pl-4 pr-11 text-sm text-white outline-none transition-all placeholder:text-white/20"
                   style={{
                     background: "rgba(255,255,255,0.07)",
                     border: "1px solid rgba(255,255,255,0.12)",
                   }}
-                  onChange={(event) => setPassword(event.target.value)}
-                  onFocus={(event) =>
-                    (event.currentTarget.style.border =
-                      "1px solid var(--primary)")
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={(e) =>
+                    (e.currentTarget.style.border = "1px solid var(--primary)")
                   }
-                  onBlur={(event) =>
-                    (event.currentTarget.style.border =
-                      "1px solid rgba(255,255,255,0.12)")
+                  onBlur={(e) =>
+                    (e.currentTarget.style.border = "1px solid rgba(255,255,255,0.12)")
                   }
                 />
                 <button
@@ -222,26 +223,18 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {errorMessage ? (
-              <p className="rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100">
-                {errorMessage}
-              </p>
-            ) : null}
-
-            <div className="flex justify-end -mt-1">
-              <Link
-                href="#"
-                className="text-xs text-white/30 transition-colors hover:text-primary"
-              >
+            <div className="-mt-1 flex justify-end">
+              <Link href="#" className="text-xs text-white/30 transition-colors hover:text-primary">
                 Forgot password?
               </Link>
             </div>
 
-            <div className="mt-2 flex gap-3">
+            <div className="mt-2">
               <motion.button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-primary cursor-pointer py-3.5 text-sm font-bold text-white transition-colors hover:bg-primary-dark"
+                whileTap={{ scale: 0.98 }}
+                className="w-full cursor-pointer bg-primary py-3.5 text-sm font-bold text-white transition-colors hover:bg-primary-dark disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? "Signing In..." : "Sign In"}
               </motion.button>
