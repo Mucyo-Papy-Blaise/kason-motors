@@ -18,7 +18,7 @@ import {
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Inventory", href: "/inventory" },
-  { label: "About", href: "/#about" },
+  { label: "About", href: "/about-us" },
   { label: "Dealers", href: "/#dealers" },
 ];
 
@@ -40,6 +40,8 @@ export default function Navbar({ user }: NavbarProps) {
     }
     if (href === "/inventory") {
       return pathname === "/inventory" || pathname.startsWith("/inventory/");
+    }else if (href === "/about-us") {
+      return pathname === "/about-us/" || pathname.startsWith("/about-us/");
     }
     return false;
   };
