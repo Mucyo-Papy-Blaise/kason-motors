@@ -40,6 +40,8 @@ export default function Navbar({ user }: NavbarProps) {
     }
     if (href === "/inventory") {
       return pathname === "/inventory" || pathname.startsWith("/inventory/");
+    }else if (href === "/about-us") {
+      return pathname === "/about-us/" || pathname.startsWith("/about-us/");
     }
     return false;
   };
