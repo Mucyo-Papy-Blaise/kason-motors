@@ -1,10 +1,11 @@
 type ContactEmailProps = {
   name: string;
   email: string;
+  phonenumber?: string;
   message: string;
 };
 
-export function ContactEmail({ name, email, message }: ContactEmailProps) {
+export function ContactEmail({ name, email, phonenumber, message }: ContactEmailProps) {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -73,6 +74,20 @@ export function ContactEmail({ name, email, message }: ContactEmailProps) {
                       </td>
                     </tr>
                   </table>
+
+                  <!-- Phone Number -->
+                  ${phonenumber ? `
+                  <p style="margin:0 0 6px; font-size:11px; color:#2e7d32; text-transform:uppercase; font-weight:700; letter-spacing:1.5px;">
+                    Phone Number
+                  </p>
+                  <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+                    <tr>
+                      <td style="background-color:#f1f8f1; border-left:4px solid #4caf50; border-radius:0 6px 6px 0; padding:14px 18px; font-size:15px; color:#1b5e20; font-weight:600;">
+                        <a href="tel:${phonenumber}" style="color:#2e7d32; text-decoration:none;">${phonenumber}</a>
+                      </td>
+                    </tr>
+                  </table>
+                  ` : ''}
 
                   <!-- Message -->
                   <p style="margin:0 0 6px; font-size:11px; color:#2e7d32; text-transform:uppercase; font-weight:700; letter-spacing:1.5px;">

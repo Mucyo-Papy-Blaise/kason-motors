@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 
+
 type HeroSlide = {
   id: number;
   title: string;
@@ -134,7 +135,7 @@ export default function Hero() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [slides.length]);
 
   const slide = slides[current];
 

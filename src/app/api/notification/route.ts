@@ -19,28 +19,36 @@ const transporter = nodemailer.createTransport({
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, message } = body;
+    const { name, email, phonenumber, message } = body;
 
-    // 1. Save to Supabase
+    // 1. Save to Supabase (phonenumber included)
     const { error } = await supabase.from("contacts").insert([
-      { name, email, message },
+      { name, email, phonenumber, message },
     ]);
 
     if (error) {
-      return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+      return NextResponse.json(
+        { success: false, message: error.message },
+        { status: 500 }
+      );
     }
 
-    // 2. Send email notification to yourself
+    // 2. Send email notification to yourself (phonenumber passed through)
     await transporter.sendMail({
       from: process.env.SMTP_FROM_EMAIL,
       to: process.env.SMTP_USER,
       subject: `New message from ${name}`,
-      html:ContactEmail({name,email,message}),
+      html: ContactEmail({ name, email, phonenumber, message }),
     });
 
-    return NextResponse.json({ success: true, message: "Message saved successfully" }, { status: 201 });
-
+    return NextResponse.json(
+      { success: true, message: "Message saved successfully" },
+      { status: 201 }
+    );
   } catch (err: any) {
-    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: err.message },
+      { status: 500 }
+    );
   }
 }
