@@ -9,11 +9,10 @@ import {
 } from "react-icons/fa6";
 
 const quickLinks = [
-  { label: "Home", href: "#" },
-  { label: "Inventory", href: "#" },
-  { label: "About Us", href: "#" },
-  { label: "Dealers", href: "#" },
-  { label: "Contact", href: "#" },
+  { label: "Home", href: "/" },
+  { label: "Inventory", href: "/inventory" },
+  { label: "About Us", href: "/about-us" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const carTypes = [
@@ -34,29 +33,9 @@ const socials = [
 export default function Footer() {
   return (
     <footer className="bg-gray-dark">
-      {/* Top CTA strip */}
-      <div className="border-b border-white/8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold tracking-widest uppercase text-primary mb-1">
-              Ready to drive?
-            </p>
-            <h3 className="text-white font-bold text-xl leading-tight">
-              Find your perfect vehicle today.
-            </h3>
-          </div>
-          <Link
-            href="#"
-            className="shrink-0 flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-bold rounded-full transition-all duration-200 shadow-lg shadow-primary/20"
-          >
-            Browse Inventory <ArrowUpRight size={15} />
-          </Link>
-        </div>
-      </div>
-
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {/* Brand col */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2.5 mb-4">
@@ -106,26 +85,6 @@ export default function Footer() {
                   >
                     <span className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-primary transition-colors" />
                     {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Car Types */}
-          <div>
-            <h4 className="text-white font-bold text-xs tracking-widest uppercase mb-5">
-              Browse By Type
-            </h4>
-            <ul className="space-y-3">
-              {carTypes.map((item) => (
-                <li key={item.label}>
-                  <Link
-                    href={item.href}
-                    className="text-white/40 text-sm hover:text-primary transition-colors duration-150 flex items-center gap-1.5 group"
-                  >
-                    <span className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-primary transition-colors" />
-                    {item.label}
                   </Link>
                 </li>
               ))}

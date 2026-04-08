@@ -12,7 +12,7 @@ const Pillar: React.FC<PillarProps> = ({ icon, title }) => (
     <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
       {icon}
     </div>
-    <p className="text-sm font-semibold text-ink leading-tight max-w-30">
+    <p className="text-sm font-semibold text-font leading-tight max-w-30">
       {title}
     </p>
   </div>
@@ -55,16 +55,16 @@ const CityIcon = () => (
 );
 
 export const AboutCta: React.FC = () => (
-  <section className="py-20 bg-subtle">
+  <section className="py-20 bg-bg">
     <div className="max-w-7xl mx-auto px-6">
-      <div className="bg-bg  border border-line shadow-sm overflow-hidden">
+      <div className="bg-gray-dark border border-line/25 shadow-sm overflow-hidden">
         <div className="grid md:grid-cols-2">
           {/* Left */}
           <div className="p-10 md:p-14 flex flex-col justify-center">
             <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase block mb-3">
               Find Out More
             </span>
-            <h2 className="text-3xl font-bold text-ink leading-tight mb-4">
+            <h2 className="text-3xl font-bold text-font leading-tight mb-4">
               Rwanda&apos;s Green Mobility Partner
             </h2>
             <p className="text-gray-mid text-sm leading-relaxed mb-8">
@@ -82,7 +82,7 @@ export const AboutCta: React.FC = () => (
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <button className="bg-primary hover:bg-primary-dark text-white font-bold text-sm px-6 py-3 transition-colors duration-200">
+              <button className="bg-primary hover:bg-primary-dark text-font font-bold text-sm px-6 py-3 transition-colors duration-200">
                 Our Services
               </button>
               <button className="border border-primary text-primary hover:bg-primary/5 font-bold text-sm px-6 py-3 transition-colors duration-200">

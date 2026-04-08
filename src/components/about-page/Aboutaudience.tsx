@@ -18,7 +18,7 @@ const AudienceItem: React.FC<AudienceItemProps> = ({
       {emoji}
     </div>
     <div>
-      <h4 className="font-bold text-ink text-sm mb-1">{title}</h4>
+      <h4 className="font-bold text-font text-sm mb-1">{title}</h4>
       <p className="text-gray-mid text-xs leading-relaxed">{description}</p>
     </div>
   </div>
@@ -85,7 +85,7 @@ export const AboutAudience: React.FC = () => (
         <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase block mb-3">
           Who We Serve
         </span>
-        <h2 className="text-3xl font-bold text-ink mb-3 leading-tight">
+        <h2 className="text-3xl font-bold text-font mb-3 leading-tight">
           Our Target Audience
         </h2>
         <p className="text-gray-mid text-sm leading-relaxed mb-6">

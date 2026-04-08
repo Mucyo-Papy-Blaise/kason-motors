@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 
 const navLinks = [
-  { label: "Home", href: "#" },
-  { label: "Inventory", href: "inventory" },
-  { label: "About", href: "about" },
+  { label: "Home", href: "/" },
+  { label: "Inventory", href: "/inventory" },
+  { label: "About", href: "/about-us" },
   { label: "Contact Us", href: "contact" },
 ];
 
@@ -35,15 +35,9 @@ export default function Navbar({ user }: NavbarProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const isLinkActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/";
-    }
-    if (href === "/inventory") {
-      return pathname === "/inventory" || pathname.startsWith("/inventory/");
-    }else if (href === "/about-us") {
-      return pathname === "/about-us/" || pathname.startsWith("/about-us/");
-    }
-    return false;
+    if (href === "/") return pathname === "/";
+
+    return pathname === href || pathname.startsWith(href + "/");
   };
 
   useEffect(() => {
@@ -91,7 +85,7 @@ export default function Navbar({ user }: NavbarProps) {
           scrolled ? "hidden" : "block"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-3 sm:gap-5 text-xs text-white/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-3 sm:gap-5 text-xs text-font/60">
           <span className="flex items-center gap-1.5">
             <MapPin size={12} />
             <span className="hidden sm:inline">KG 11 Ave, Kigali, Rwanda</span>
@@ -110,7 +104,7 @@ export default function Navbar({ user }: NavbarProps) {
       <nav
         className={`w-full z-50 transition-all duration-500 ${
           scrolled
-            ? "fixed top-0 left-0 right-0 bg-white shadow-lg"
+            ? "fixed top-0 left-0 right-0 border-b border-line/15 bg-gray-dark/95 shadow-lg backdrop-blur-md"
             : "relative bg-gray-dark"
         }`}
       >
@@ -124,11 +118,7 @@ export default function Navbar({ user }: NavbarProps) {
               height={44}
               className="w-auto h-9 sm:h-11 object-contain rounded-full"
             />
-            <span
-              className={`text-base sm:text-xl font-bold tracking-tight ${
-                scrolled ? "text-gray-dark" : "text-white"
-              }`}
-            >
+            <span className="text-base sm:text-xl font-bold tracking-tight text-font">
               KASON <span className="text-primary">MOTORS</span>
             </span>
           </Link>
@@ -144,9 +134,7 @@ export default function Navbar({ user }: NavbarProps) {
                   className={`relative px-4 py-2 text-sm font-semibold rounded transition-all duration-200 ${
                     isActive
                       ? "text-primary"
-                      : scrolled
-                        ? "text-gray-dark hover:text-primary"
-                        : "text-white hover:text-white/70"
+                      : "text-font hover:text-font/75"
                   }`}
                 >
                   {link.label}
@@ -170,19 +158,9 @@ export default function Navbar({ user }: NavbarProps) {
                     e.stopPropagation();
                     setUserMenuOpen((v) => !v);
                   }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all duration-200 ${
-                    scrolled
-                      ? "border-line text-gray-dark hover:border-primary hover:text-primary"
-                      : "border-white/20 text-white hover:bg-white/10"
-                  }`}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/20 text-sm font-semibold text-font transition-all duration-200 hover:bg-white/10"
                 >
-                  <span
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                      scrolled
-                        ? "bg-primary/10 text-primary"
-                        : "bg-white/20 text-white"
-                    }`}
-                  >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs font-bold text-font">
                     {initials}
                   </span>
                   {user.fullName.split(" ")[0]}
@@ -231,11 +209,7 @@ export default function Navbar({ user }: NavbarProps) {
             ) : (
               <Link
                 href="/login"
-                className={`hidden md:flex px-5 py-2 rounded-full text-sm font-semibold items-center gap-2 transition-all duration-300 ${
-                  scrolled
-                    ? "bg-primary text-white hover:bg-primary-dark shadow-md"
-                    : "bg-white/15 text-white border border-white/25 hover:bg-white/25"
-                }`}
+                className="hidden md:flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-5 py-2 text-sm font-semibold text-font transition-all duration-300 hover:bg-white/25"
               >
                 Sign In
               </Link>
@@ -244,11 +218,7 @@ export default function Navbar({ user }: NavbarProps) {
             {/* Mobile hamburger */}
             <button
               onClick={() => setMenuOpen(true)}
-              className={`md:hidden flex items-center justify-center w-9 h-9 rounded transition-colors ${
-                scrolled
-                  ? "text-gray-dark hover:bg-subtle"
-                  : "text-white hover:bg-white/10"
-              }`}
+              className="flex h-9 w-9 items-center justify-center rounded text-font transition-colors hover:bg-white/10 md:hidden"
               aria-label="Open menu"
             >
               <Menu size={20} />
@@ -266,17 +236,17 @@ export default function Navbar({ user }: NavbarProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMenuOpen(false)}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-60"
+              className="fixed inset-0 z-60 bg-ink/70 backdrop-blur-sm"
             />
             <motion.div
               initial={{ x: "-100%" }}
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 left-0 h-full w-72 bg-white z-70 flex flex-col shadow-2xl"
+              className="fixed top-0 left-0 z-70 flex h-full w-72 max-w-[calc(100vw-0.75rem)] flex-col border-r border-line/20 bg-gray-dark shadow-2xl"
             >
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-line">
+              <div className="flex items-center justify-between border-b border-line/25 px-5 py-4">
                 <Link
                   href="/"
                   className="flex items-center gap-2"
@@ -289,21 +259,22 @@ export default function Navbar({ user }: NavbarProps) {
                     height={36}
                     className="h-9 w-auto object-contain rounded-full"
                   />
-                  <span className="font-bold text-gray-dark text-base">
+                  <span className="text-base font-bold text-font">
                     KASON <span className="text-primary">MOTORS</span>
                   </span>
                 </Link>
                 <button
                   onClick={() => setMenuOpen(false)}
-                  className="p-1.5 rounded-lg text-gray-mid hover:bg-subtle transition-colors"
+                  className="rounded-lg p-1.5 text-font transition-colors hover:bg-white/10"
+                  aria-label="Close menu"
                 >
                   <X size={20} />
                 </button>
               </div>
 
               {/* Nav */}
-              <nav className="flex-1 px-4 py-6 flex flex-col gap-1 overflow-y-auto">
-                <p className="text-xs font-bold text-gray-mid tracking-widest uppercase px-3 mb-3">
+              <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-4 py-6">
+                <p className="mb-3 px-3 text-xs font-bold uppercase tracking-widest text-font/60">
                   Menu
                 </p>
                 {navLinks.map((link, i) => {
@@ -320,16 +291,18 @@ export default function Navbar({ user }: NavbarProps) {
                         onClick={() => {
                           setMenuOpen(false);
                         }}
-                        className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
+                        className={`flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold transition-all ${
                           isActive
-                            ? "bg-primary text-white shadow-md"
-                            : "text-gray-dark hover:bg-subtle hover:text-primary"
+                            ? "bg-primary text-font shadow-md"
+                            : "text-font hover:bg-white/10 hover:text-primary"
                         }`}
                       >
                         <span>{link.label}</span>
                         <ChevronRight
                           size={16}
-                          className={isActive ? "text-white/70" : "text-gray-mid"}
+                          className={
+                            isActive ? "text-font/70" : "text-font/50"
+                          }
                         />
                       </Link>
                     </motion.div>
@@ -343,16 +316,16 @@ export default function Navbar({ user }: NavbarProps) {
                   className="mt-4 px-1"
                 >
                   {user ? (
-                    <div className="rounded-xl border border-line overflow-hidden">
-                      <div className="px-4 py-3 bg-subtle flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold border border-primary/20">
+                    <div className="overflow-hidden rounded-xl border border-line/25 bg-bg">
+                      <div className="flex items-center gap-2.5 px-4 py-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-xs font-bold text-primary">
                           {initials}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-bold text-gray-dark truncate">
+                          <p className="truncate text-xs font-bold text-font">
                             {user.fullName}
                           </p>
-                          <p className="text-[10px] text-gray-mid capitalize">
+                          <p className="text-[10px] capitalize text-font/60">
                             {user.role}
                           </p>
                         </div>
@@ -361,9 +334,9 @@ export default function Navbar({ user }: NavbarProps) {
                         <Link
                           href="/admin"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-dark hover:bg-subtle hover:text-primary transition-colors border-t border-line"
+                          className="flex items-center gap-2.5 border-t border-line/25 px-4 py-2.5 text-sm text-font transition-colors hover:bg-white/10 hover:text-primary"
                         >
-                          <User size={14} className="text-gray-mid" /> Admin
+                          <User size={14} className="text-font/60" /> Admin
                           Dashboard
                         </Link>
                       )}
@@ -372,16 +345,16 @@ export default function Navbar({ user }: NavbarProps) {
                           setMenuOpen(false);
                           handleLogout();
                         }}
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-dark hover:bg-red-50 hover:text-red-500 transition-colors w-full border-t border-line"
+                        className="flex w-full items-center gap-2.5 border-t border-line/25 px-4 py-2.5 text-sm text-font transition-colors hover:bg-white/10 hover:text-accent"
                       >
-                        <LogOut size={14} className="text-gray-mid" /> Log Out
+                        <LogOut size={14} className="text-font/60" /> Log Out
                       </button>
                     </div>
                   ) : (
                     <Link
                       href="/login"
                       onClick={() => setMenuOpen(false)}
-                      className="flex items-center justify-center w-full py-2.5 rounded-xl bg-primary text-white text-sm font-semibold shadow-md hover:bg-primary-dark transition-all"
+                      className="flex w-full items-center justify-center rounded-xl bg-primary py-2.5 text-sm font-semibold text-font shadow-md transition-all hover:bg-primary-dark"
                     >
                       Log In to Your Account
                     </Link>
@@ -390,11 +363,11 @@ export default function Navbar({ user }: NavbarProps) {
               </nav>
 
               {/* Footer */}
-              <div className="px-4 py-5 border-t border-line bg-subtle">
-                <p className="text-xs font-bold text-gray-mid tracking-widest uppercase mb-3">
+              <div className="border-t border-line/25 bg-bg px-4 py-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
+                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-font/60">
                   Contact
                 </p>
-                <div className="flex flex-col gap-2.5 text-xs text-gray-mid">
+                <div className="flex flex-col gap-2.5 text-xs text-font/75">
                   <span className="flex items-center gap-2">
                     <MapPin size={13} className="text-primary" /> KG 11 Ave,
                     Kigali, Rwanda

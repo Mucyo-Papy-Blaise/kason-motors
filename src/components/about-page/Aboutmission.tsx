@@ -14,7 +14,7 @@ const Stat = ({ value, label, sub }: StatProps) => (
       {value}
     </span>
     <div>
-      <p className="font-bold text-ink text-base leading-tight">{label}</p>
+      <p className="font-bold text-font text-base leading-tight">{label}</p>
       <p className="text-gray-mid text-sm mt-1 leading-snug max-w-50">
         {sub}
       </p>
@@ -30,7 +30,7 @@ export const AboutMission  = () => (
         <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase block mb-3">
           Who We Are
         </span>
-        <h2 className="text-3xl font-bold text-ink mb-5 leading-tight">
+        <h2 className="text-3xl font-bold text-font mb-5 leading-tight">
           Our Mission &amp; Vision
         </h2>
         <p className="text-gray-mid leading-relaxed mb-4 text-sm">
@@ -72,7 +72,7 @@ export const AboutMission  = () => (
           />
         </div>
         {/* Floating badge */}
-        <div className="absolute -bottom-5 -left-5 bg-primary text-white rounded-xl px-5 py-4 shadow-lg">
+        <div className="absolute -bottom-5 -left-5 bg-primary text-font rounded-xl px-5 py-4 shadow-lg">
           <p className="text-2xl font-black">100%</p>
           <p className="text-xs font-semibold text-accent mt-0.5">
             Factory-Backed Guarantee

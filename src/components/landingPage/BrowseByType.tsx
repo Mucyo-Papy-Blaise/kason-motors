@@ -102,17 +102,16 @@ export default function BrowseByType() {
   }, []);
 
   return (
-    <section className="bg-gray-light px-6 pt-0 pb-20 -mt-20">
+    <section className="bg-background px-6 pt-0 pb-20 -mt-20">
       <div className="mx-auto max-w-7xl pt-32">
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
             <p
-              className="text-sm font-bold tracking-widest uppercase mb-1"
-              style={{ color: "var(--primary)" }}
+              className="text-sm font-bold tracking-widest uppercase mb-1 text-font"
             >
               Explore
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-light">
               Browse By Type
             </h2>
           </div>
@@ -120,8 +119,7 @@ export default function BrowseByType() {
           <div className="flex items-center gap-3 mt-1 shrink-0">
             <Link
               href="/inventory"
-              className="text-sm font-semibold hover:underline hidden sm:block"
-              style={{ color: "var(--primary)" }}
+              className="text-sm font-semibold hover:underline hidden sm:block text-font"
             >
               See All Types →
             </Link>
@@ -241,8 +239,7 @@ export default function BrowseByType() {
         <div className="mt-5 sm:hidden">
           <Link
             href="/inventory"
-            className="text-sm font-semibold hover:underline"
-            style={{ color: "var(--primary)" }}
+            className="text-sm font-semibold hover:underline text-font"
           >
             See All Types →
           </Link>

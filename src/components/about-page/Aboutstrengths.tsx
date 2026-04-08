@@ -58,8 +58,8 @@ export const AboutStrengths = () => (
         <span className="text-accent text-xs font-bold tracking-[0.2em] uppercase block mb-3">
           Our Competitive Edge
         </span>
-        <h2 className="text-3xl font-bold text-white">What Makes Us Unique</h2>
-        <p className="text-white/60 text-sm mt-3 max-w-lg mx-auto">
+        <h2 className="text-3xl font-bold text-font">What Makes Us Unique</h2>
+        <p className="text-font/60 text-sm mt-3 max-w-lg mx-auto">
           Kason Motor differentiates itself through factory-level support,
           decades of experience, and full-service capability tailored to
           Rwanda&apos;s evolving market.
@@ -70,13 +70,13 @@ export const AboutStrengths = () => (
         {STRENGTHS.map((s) => (
           <div
             key={s.number}
-            className="relative pl-5 border-l-2 border-white/20 hover:border-accent transition-colors duration-300 group"
+            className="relative pl-5 border-l-2 border-font/20 hover:border-accent transition-colors duration-300 group"
           >
             <p className="text-[10px] font-black tracking-widest text-accent/60 group-hover:text-accent transition-colors mb-1 uppercase">
               {s.number}
             </p>
-            <h4 className="font-bold text-white text-sm mb-1.5">{s.title}</h4>
-            <p className="text-white/55 text-xs leading-relaxed">
+            <h4 className="font-bold text-font text-sm mb-1.5">{s.title}</h4>
+            <p className="text-font/55 text-xs leading-relaxed">
               {s.description}
             </p>
           </div>

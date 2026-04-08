@@ -15,7 +15,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   title,
   items,
 }) => (
-  <div className="bg-surface border border-line  p-6 hover:border-primary/40 hover:shadow-lg transition-all duration-300 group">
+  <div className="bg-gray-dark border border-line/25 p-6 hover:border-primary/40 hover:shadow-lg transition-all duration-300 group">
     <div className="flex items-start gap-3 mb-4">
       <div className="w-10 h-10  bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 shrink-0">
         {icon}
@@ -24,7 +24,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
         <p className="text-[10px] font-bold tracking-widest text-gray-mid uppercase">
           {number}
         </p>
-        <h3 className="font-bold text-ink text-sm leading-tight">{title}</h3>
+        <h3 className="font-bold text-font text-sm leading-tight">{title}</h3>
       </div>
     </div>
     <ul className="space-y-1.5">
@@ -177,13 +177,13 @@ const SERVICES: ServiceCardProps[] = [
 ];
 
 export const AboutServices: React.FC = () => (
-  <section className="py-20 bg-subtle">
+  <section className="py-20 bg-bg">
     <div className="max-w-7xl mx-auto px-6">
       <div className="text-center mb-12">
         <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase block mb-3">
           What We Offer
         </span>
-        <h2 className="text-3xl font-bold text-ink">
+        <h2 className="text-3xl font-bold text-font">
           A Complete Mobility Ecosystem
         </h2>
         <p className="text-gray-mid text-sm mt-3 max-w-xl mx-auto">

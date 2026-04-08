@@ -16,10 +16,10 @@ export const AboutHero = () => (
       <span className="inline-block text-accent text-xs font-bold tracking-[0.25em] uppercase mb-4 border border-accent/40 px-4 py-1 rounded-full">
         Kigali Special Economic Zone · Rwanda
       </span>
-      <h1 className="text-white text-4xl md:text-5xl font-bold leading-tight mb-4">
+      <h1 className="text-font text-4xl md:text-5xl font-bold leading-tight mb-4">
         About Kason Motor Ltd
       </h1>
-      <p className="text-white/70 text-sm md:text-base uppercase tracking-[0.15em] max-w-lg">
+      <p className="text-font/70 text-sm md:text-base uppercase tracking-[0.15em] max-w-lg">
         Driving Rwanda&apos;s Transition to Sustainable, Smart Mobility
       </p>
     </div>
