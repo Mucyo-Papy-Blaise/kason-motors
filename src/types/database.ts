@@ -1,3 +1,5 @@
+// 📁 types/database.types.ts
+
 export type UserRole = "admin" | "user";
 
 export type Json =
@@ -153,6 +155,32 @@ export type Database = {
           message?: string;
           created_at?: string;
           read?: boolean;
+        };
+        Relationships: [];
+      };
+
+      // ✅ TESTIMONIALS TABLE (no rating, no avatar)
+      testimonials: {
+        Row: {
+          id: number;
+          name: string;
+          role: string;
+          text: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: number;
+          name: string;
+          role: string;
+          text: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: number;
+          name?: string;
+          role?: string;
+          text?: string;
+          created_at?: string;
         };
         Relationships: [];
       };

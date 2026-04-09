@@ -18,6 +18,7 @@ Plus,
   Bell,
   HelpCircle,
   Gauge,
+  MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
@@ -26,6 +27,9 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
+
+
+
 
 type AdminSidebarProps = {
   fullName: string;
@@ -77,7 +81,20 @@ const menuGroups = [
       },
     ],
   },
-];
+
+{
+label:'Testimonial',
+items:[
+ {
+ label: "Add Testimonial",
+        href: "/admin/testimonials",
+        icon: MessageSquare,
+        badge: null,
+ },
+],
+},
+]
+;
 
 export default function AdminSidebar({ fullName }: AdminSidebarProps) {
   const pathname = usePathname();
