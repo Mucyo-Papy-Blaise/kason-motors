@@ -126,9 +126,9 @@ export default function BrowseByType() {
   const showSkeleton = isLoading && carTypes.length === 0;
 
   return (
-    <section className="-mt-20 bg-bg px-6 pb-20 pt-0">
-      <div className="mx-auto max-w-7xl pt-32">
-        <div className="mb-8 flex items-start justify-between gap-4">
+    <section className="-mt-14 bg-bg px-4 pb-12 pt-0 sm:-mt-20 sm:px-6 sm:pb-20">
+      <div className="mx-auto max-w-7xl pt-20 sm:pt-32">
+        <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
           <div>
             <p className="mb-1 text-sm font-bold uppercase tracking-widest text-font">
               Explore
@@ -183,7 +183,7 @@ export default function BrowseByType() {
             <div className="md:hidden">
               <div
                 ref={scrollRef}
-                className="flex touch-pan-x gap-4 overflow-x-auto px-2 pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className="flex touch-pan-x gap-4 overflow-x-auto px-0.5 pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
                 {carTypes.map((type, i) => (
                   <Link

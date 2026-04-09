@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/landingPage/Navbar";
 import Footer from "@/components/landingPage/Footer";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type CarDetails = {
   id: number;
@@ -61,7 +62,6 @@ export default function CarDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeImage, setActiveImage] = useState(0);
-  const [inquiryOpen, setInquiryOpen] = useState(false);
 
   useEffect(() => {
     const loadCar = async () => {
@@ -88,6 +88,12 @@ export default function CarDetailPage() {
   }, [params?.id]);
 
   const carTitle = car?.title || car?.name || "Vehicle details";
+
+  const whatsappHref = car
+    ? buildWhatsAppUrl(
+        `Hi Kason Motors, I'm interested in this vehicle: ${carTitle} (Listing #${car.id}).`,
+      )
+    : "#";
   const imageUrls = useMemo(() => {
     if (!car) return [];
     if (Array.isArray(car.image_urls) && car.image_urls.length > 0)
@@ -270,34 +276,22 @@ export default function CarDetailPage() {
                     {formatPrice(Number(car.price || 0))}
                   </span>
                 </div>
-                <div className="space-y-3 mt-4">
-                  <button className="w-full bg-primary hover:bg-primary-dark text-font font-semibold py-2 transition-colors duration-200 text-sm tracking-wide">
-                    Contact Seller
-                  </button>
+                <div className="mt-4 space-y-3">
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex w-full cursor-pointer items-center justify-center bg-primary py-2.5 text-center text-sm font-semibold tracking-wide text-font transition-colors duration-200 hover:bg-primary-dark"
+                  >
+                    Contact seller
+                  </a>
+                  <Link
+                    href={`/test-driver?carId=${car.id}`}
+                    className="flex w-full cursor-pointer items-center justify-center border border-line/40 bg-transparent py-2.5 text-center text-sm font-semibold tracking-wide text-font transition-colors duration-200 hover:bg-white/10"
+                  >
+                    Book test drive
+                  </Link>
                 </div>
-
-                {inquiryOpen ? (
-                  <div className="mt-4 space-y-3">
-                    <input
-                      type="text"
-                      placeholder="Your name"
-                      className="w-full border border-line/30 bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Phone number"
-                      className="w-full border border-line/30 bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid"
-                    />
-                    <textarea
-                      rows={3}
-                      placeholder="Your message…"
-                      className="w-full border border-line/30 bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid resize-none"
-                    />
-                    <button className="w-full bg-accent text-primary-dark font-semibold py-2.5 text-sm">
-                      Submit Inquiry
-                    </button>
-                  </div>
-                ) : null}
               </div>
             </div>
           </div>

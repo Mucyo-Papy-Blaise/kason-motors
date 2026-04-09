@@ -84,9 +84,9 @@ export default function FeaturedCars() {
   const showSkeleton = isLoading && featuredCars.length === 0;
 
   return (
-    <section className="bg-bg px-4 py-16 sm:px-6 sm:py-20">
+    <section className="bg-bg px-4 py-12 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-10 flex flex-col justify-between gap-6 md:mb-12 md:flex-row md:items-end">
+        <div className="mb-6 flex flex-col justify-between gap-6 sm:mb-10 md:mb-12 md:flex-row md:items-end">
           <div>
             <p className="mb-2 text-sm font-bold uppercase tracking-widest text-font">
               Our Fleet
@@ -142,7 +142,7 @@ export default function FeaturedCars() {
           </>
         )}
 
-        <div className="mt-8 flex justify-center sm:mt-10">
+        <div className="mt-6 flex justify-center sm:mt-10">
           <Link
             href="/inventory"
             className="flex cursor-pointer items-center gap-2 border-b-2 pb-0.5 text-sm font-bold uppercase tracking-widest text-font transition-colors hover:text-primary/80"

@@ -41,7 +41,7 @@ export default function WhyChooseUs() {
   const inView = useInView(ref, { once: true });
 
   return (
-    <section className="relative w-full py-20 px-6 overflow-hidden" ref={ref}>
+    <section className="relative w-full overflow-hidden px-4 py-12 sm:px-6 sm:py-20" ref={ref}>
       <div
         className="absolute inset-0 bg-fixed bg-cover bg-center"
         style={{ backgroundImage: `url(${heroBackground})` }}
@@ -49,8 +49,8 @@ export default function WhyChooseUs() {
       />
       <div className="absolute inset-0 bg-black/65" aria-hidden="true" />
 
-      <div className="relative z-10 max-w-7xl mx-auto space-y-12 text-white">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="relative z-10 mx-auto max-w-7xl space-y-8 text-white sm:space-y-12">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
           {stats.map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -71,7 +71,7 @@ export default function WhyChooseUs() {
           initial={{ opacity: 0, y: 40 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="flex flex-col lg:flex-row gap-10"
+          className="flex flex-col gap-7 lg:flex-row lg:gap-10"
         >
           <div className="lg:w-1/3 space-y-4">
             <p

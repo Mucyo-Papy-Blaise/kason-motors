@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,6 +20,12 @@ Plus,
   Gauge,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+);
 
 type AdminSidebarProps = {
   fullName: string;
@@ -59,9 +65,9 @@ const menuGroups = [
     items: [
       {
         label: "Notifications",
-        href: "/admin/notifications",
+        href: "/admin/notification",
         icon: Bell,
-        badge: "3",
+        badge: null as string | null,
       },
       {
         label: "Settings",
@@ -78,6 +84,36 @@ export default function AdminSidebar({ fullName }: AdminSidebarProps) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [notificationUnread, setNotificationUnread] = useState(0);
+
+  const fetchNotificationUnread = useCallback(async () => {
+    const res = await fetch("/api/admin/notifications/unread");
+    if (!res.ok) return;
+    const data = (await res.json()) as { total?: number };
+    setNotificationUnread(typeof data.total === "number" ? data.total : 0);
+  }, []);
+
+  useEffect(() => {
+    fetchNotificationUnread();
+
+    const channel = supabase
+      .channel("sidebar-notification-unread")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "contacts" },
+        () => fetchNotificationUnread(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "book_test_driver" },
+        () => fetchNotificationUnread(),
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchNotificationUnread]);
 
   const handleLogout = async () => {
     try {
@@ -137,12 +173,14 @@ export default function AdminSidebar({ fullName }: AdminSidebarProps) {
                   exit={{ opacity: 0, x: -8 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <p className="font-bold text-sm tracking-tight leading-none text-foreground">
+                <Link href='/'>
+                <p className="font-bold text-sm tracking-tight leading-none text-gray-dark ">
                     KASON <span className="text-primary">MOTORS</span>
                   </p>
                   <p className="text-[11px] mt-0.5 font-medium text-gray-mid">
                     Admin Console
                   </p>
+                </Link>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -207,21 +245,30 @@ const isActive = pathname === item.href;
                           )}
                         </AnimatePresence>
 
-                        {item.badge && !collapsed && (
-                          <motion.span
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none
+                        {!collapsed &&
+                          (item.href === "/admin/notification"
+                            ? notificationUnread > 0
+                            : Boolean(item.badge)) && (
+                            <motion.span
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              exit={{ opacity: 0, scale: 0.8 }}
+                              className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none
                               ${
-                                item.badge === "New"
-                                  ? "bg-primary/10 text-primary border border-primary/20"
-                                  : "bg-red-500/10 text-red-500 border border-red-500/20"
+                                item.href === "/admin/notification"
+                                  ? "bg-violet-500/10 text-violet-700 border border-violet-500/25"
+                                  : item.badge === "New"
+                                    ? "bg-primary/10 text-primary border border-primary/20"
+                                    : "bg-red-500/10 text-red-500 border border-red-500/20"
                               }`}
-                          >
-                            {item.badge}
-                          </motion.span>
-                        )}
+                            >
+                              {item.href === "/admin/notification"
+                                ? notificationUnread > 99
+                                  ? "99+"
+                                  : String(notificationUnread)
+                                : item.badge}
+                            </motion.span>
+                          )}
                       </Link>
                     );
                   })}

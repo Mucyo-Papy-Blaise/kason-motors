@@ -118,13 +118,14 @@ export const CarListingPage: React.FC = () => {
 
   useEffect(() => {
     const fetchCars = async () => {
-      try {
-        const cached = readVehicleListCache<InventoryCar>();
-        if (cached) {
-          setCars(cached);
-          setIsLoading(false);
-        }
+      const cached = readVehicleListCache<InventoryCar>();
+      if (cached) {
+        setCars(cached);
+        setIsLoading(false);
+        return;
+      }
 
+      try {
         const response = await fetch("/api/vehicles/getList");
         const result = await response.json();
         if (response.ok && result.success && Array.isArray(result.data)) {
