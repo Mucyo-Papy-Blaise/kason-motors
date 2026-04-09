@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import {
+  readVehicleListCache,
+  writeVehicleListCache,
+} from "@/lib/vehiclesListCache";
 
 
 type HeroSlide = {
@@ -61,10 +65,46 @@ const fallbackSlides: HeroSlide[] = [
   },
 ];
 
+function buildSlidesFromVehicles(data: Vehicle[]): HeroSlide[] {
+  const byBrand = new Map<string, Vehicle>();
+  const sorted = [...data].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+
+  sorted.forEach((car) => {
+    const brandKey = (car?.brand || "").trim();
+    if (!brandKey) return;
+    if (!byBrand.has(brandKey)) {
+      byBrand.set(brandKey, car);
+    }
+  });
+
+  return Array.from(byBrand.values())
+    .slice(0, 8)
+    .map((car) => {
+      const brand = car?.brand?.toUpperCase() || "FEATURED";
+      const name =
+        car.title ||
+        `${car?.brand || ""} ${car?.model || ""} ${car?.year || ""}`.trim() ||
+        "Featured Vehicle";
+      const details = [car?.year, car?.body_type, car.fuel]
+        .filter(Boolean)
+        .join(" · ");
+      return {
+        id: car.id,
+        title: `${brand} COLLECTION`,
+        car: name.toUpperCase(),
+        price: `${Number(car?.price || 0).toLocaleString()} RWF`,
+        period: "",
+        description: details || "Explore premium vehicles now available.",
+        image: car?.image_urls?.[0] || car?.image || fallbackSlides[0].image,
+      };
+    });
+}
+
 export default function Hero() {
   const ref = useRef(null);
   const [current, setCurrent] = useState(0);
-  const [slides, setSlides] = useState<HeroSlide[]>(fallbackSlides);
+  const [slides, setSlides] = useState<HeroSlide[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -75,54 +115,39 @@ export default function Hero() {
 
   useEffect(() => {
     const loadSlides = async () => {
+      const cached = readVehicleListCache<Vehicle>();
+      if (cached?.length) {
+        const cachedSlides = buildSlidesFromVehicles(cached);
+        setSlides(cachedSlides.length > 0 ? cachedSlides : fallbackSlides);
+        setCurrent(0);
+        setIsLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch("/api/vehicles/getList");
         const result = await response.json();
         if (!response.ok || !result.success || !Array.isArray(result.data)) {
+          setSlides(fallbackSlides);
           return;
         }
-
-        const byBrand = new Map<string, Vehicle>();
-        const sorted = [...(result.data as Vehicle[])].sort(
-          (a, b) => Number(b.id || 0) - Number(a.id || 0),
-        );
-
-        sorted.forEach((car) => {
-          const brandKey = (car?.brand || "").trim();
-          if (!brandKey) return;
-          if (!byBrand.has(brandKey)) {
-            byBrand.set(brandKey, car);
-          }
-        });
-
-        const liveSlides: HeroSlide[] = Array.from(byBrand.values())
-          .slice(0, 8)
-          .map((car) => {
-            const brand = car?.brand?.toUpperCase() || "FEATURED";
-            const name =
-              car.title ||
-              `${car?.brand || ""} ${car?.model || ""} ${car?.year || ""}`.trim() ||
-              "Featured Vehicle";
-            const details = [car?.year, car?.body_type, car.fuel]
-              .filter(Boolean)
-              .join(" · ");
-            return {
-              id: car.id,
-              title: `${brand} COLLECTION`,
-              car: name.toUpperCase(),
-              price: `${Number(car?.price || 0).toLocaleString()} RWF`,
-              period: "",
-              description: details || "Explore premium vehicles now available.",
-              image: car?.image_urls?.[0] || car?.image || fallbackSlides[0].image,
-            };
-          });
+        const vehicles = result.data as Vehicle[];
+        writeVehicleListCache(vehicles);
+        const liveSlides = buildSlidesFromVehicles(vehicles);
 
         if (liveSlides.length > 0) {
           setSlides(liveSlides);
           setCurrent(0);
+          return;
         }
+
+        // API succeeded but has no usable cars; keep a stable hero.
+        setSlides(fallbackSlides);
       } catch {
-        // Keep fallback slides on network or parsing errors.
+        // Show fallback content only if we genuinely cannot fetch data.
+        setSlides(fallbackSlides);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -130,6 +155,7 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
+    if (slides.length === 0) return;
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 5000);
@@ -138,6 +164,34 @@ export default function Hero() {
   }, [slides.length]);
 
   const slide = slides[current];
+
+  if (isLoading) {
+    return (
+      <section
+        ref={ref}
+        className="relative h-screen min-h-[600px] overflow-hidden bg-black"
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/80" />
+        <div className="relative z-10 flex h-full flex-col justify-center px-4 pt-20 sm:px-6 md:px-12 lg:px-24">
+          <div className="animate-pulse">
+            <div className="mb-4 h-3 w-40 rounded bg-white/20" />
+            <div className="mb-3 h-16 w-2/3 rounded bg-white/20 md:h-20" />
+            <div className="mb-5 h-16 w-3/5 rounded bg-white/15 md:h-20" />
+            <div className="mb-4 h-10 w-56 rounded bg-primary/30" />
+            <div className="h-4 w-72 rounded bg-white/20" />
+          </div>
+          <div className="mt-8 flex gap-2 md:mt-10">
+            {[0, 1, 2].map((dot) => (
+              <div
+                key={dot}
+                className="h-1 w-6 rounded-full bg-white/25"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -168,7 +222,7 @@ export default function Hero() {
 
       <motion.div
         style={{ opacity }}
-        className="relative z-10 flex h-full flex-col justify-center px-8 pt-20 md:px-16 lg:px-32"
+        className="relative z-10 flex h-full flex-col justify-center px-4 pt-20 sm:px-6 md:px-12 lg:px-24"
       >
         <motion.div
           key={current}

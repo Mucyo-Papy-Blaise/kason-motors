@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import SearchModal from "./Searchmodal";
+import { readVehicleListCache, writeVehicleListCache } from "@/lib/vehiclesListCache";
 
 export default function SearchSection() {
   const router = useRouter();
@@ -16,6 +17,12 @@ export default function SearchSection() {
 
   useEffect(() => {
     const fetchCarsCount = async () => {
+      const cached = readVehicleListCache<unknown>();
+      if (cached) {
+        setCarsCount(cached.length);
+        return;
+      }
+
       try {
         const response = await fetch("/api/vehicles/getList");
         const result = await response.json();
@@ -23,6 +30,7 @@ export default function SearchSection() {
           setCarsCount(0);
           return;
         }
+        writeVehicleListCache(result.data);
         setCarsCount(result.data.length);
       } catch {
         setCarsCount(0);
@@ -33,9 +41,9 @@ export default function SearchSection() {
 
   return (
     <>
-      <section className="relative z-40 -mt-24 -mb-16 px-4 pb-0 sm:px-6 lg:px-12">
+      <section className="relative z-40 -mb-10 -mt-16 px-3 pb-0 sm:-mb-16 sm:-mt-24 sm:px-6 lg:px-12">
         <div className="mx-auto max-w-5xl border border-line/25 bg-gray-dark shadow-2xl shadow-black/40">
-          <div className="flex items-center justify-between px-6 pt-5 pb-0 sm:px-8">
+          <div className="flex items-center justify-between px-4 pb-0 pt-5 sm:px-8">
             <span className="text-[10px] font-black uppercase tracking-[0.22em] text-gray-mid">
               Find Your Car
             </span>
@@ -49,7 +57,7 @@ export default function SearchSection() {
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="flex items-center gap-3 px-6 py-3 sm:px-8"
+            className="flex items-center gap-2 px-4 py-3 sm:gap-3 sm:px-8"
           >
             <div
               className="group flex flex-1 cursor-text items-center gap-3 border border-line/30 bg-bg px-4 py-3 shadow-sm transition-all duration-200 hover:border-primary/40 focus-within:border-primary"
@@ -87,7 +95,7 @@ export default function SearchSection() {
             </motion.button>
           </motion.div>
 
-          <div className="flex flex-wrap items-center gap-1.5 px-6 pb-4 sm:px-8">
+          <div className="flex flex-wrap items-center gap-1.5 px-4 pb-4 sm:px-8">
             {quickFilters.map((filter) => {
               const condition =
                 filter === "New Cars"

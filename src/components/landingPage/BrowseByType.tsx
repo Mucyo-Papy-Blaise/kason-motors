@@ -5,6 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import {
+  readVehicleListCache,
+  writeVehicleListCache,
+} from "@/lib/vehiclesListCache";
 
 const VISIBLE = 5;
 
@@ -21,8 +25,36 @@ type VehicleItem = {
   image_urls?: string[];
 };
 
+function buildCarTypesFromVehicles(data: VehicleItem[]): TypeCard[] {
+  const map = new Map<string, TypeCard>();
+  data.forEach((car) => {
+    const label = (car.body_type || car.type || "").trim();
+    if (!label) return;
+
+    const existing = map.get(label);
+    if (existing) {
+      existing.count += 1;
+      if (!existing.image) {
+        existing.image = car.image_urls?.[0] || car.image;
+      }
+      return;
+    }
+
+    map.set(label, {
+      label,
+      count: 1,
+      image: car.image_urls?.[0] || car.image,
+    });
+  });
+
+  return Array.from(map.values()).sort((a, b) =>
+    a.label.localeCompare(b.label),
+  );
+}
+
 export default function BrowseByType() {
   const [carTypes, setCarTypes] = useState<TypeCard[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [start, setStart] = useState(0);
   const total = carTypes.length;
   const canPrev = start > 0;
@@ -34,114 +66,106 @@ export default function BrowseByType() {
   const visible = carTypes.slice(start, start + VISIBLE);
 
   useEffect(() => {
-    const loadTypes = async () => {
+    let cancelled = false;
+
+    const run = async () => {
+      const cached = readVehicleListCache<VehicleItem>();
+      if (cached?.length) {
+        setCarTypes(buildCarTypesFromVehicles(cached));
+        setIsLoading(false);
+      }
+
       try {
         const response = await fetch("/api/vehicles/getList");
         const result = await response.json();
+        if (cancelled) return;
         if (!response.ok || !result.success || !Array.isArray(result.data)) {
-          setCarTypes([]);
+          if (!cached?.length) setCarTypes([]);
           return;
         }
-
-        const map = new Map<string, TypeCard>();
-        (result.data as VehicleItem[]).forEach((car) => {
-          const label = (car.body_type || car.type || "").trim();
-          if (!label) return;
-
-          const existing = map.get(label);
-          if (existing) {
-            existing.count += 1;
-            if (!existing.image) {
-              existing.image = car.image_urls?.[0] || car.image;
-            }
-            return;
-          }
-
-          map.set(label, {
-            label,
-            count: 1,
-            image: car.image_urls?.[0] || car.image,
-          });
-        });
-
-        setCarTypes(
-          Array.from(map.values()).sort((a, b) =>
-            a.label.localeCompare(b.label),
-          ),
-        );
+        writeVehicleListCache(result.data);
+        setCarTypes(buildCarTypesFromVehicles(result.data as VehicleItem[]));
       } catch {
-        setCarTypes([]);
+        if (!cancelled && !cached?.length) setCarTypes([]);
+      } finally {
+        if (!cancelled) setIsLoading(false);
       }
     };
 
-    loadTypes();
+    void run();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el || typeof window === "undefined") return;
     if (window.innerWidth >= 768) return;
+    if (carTypes.length === 0) return;
 
     const step = el.clientWidth * 0.9;
     let direction = 1;
     const interval = setInterval(() => {
       const maxScroll = el.scrollWidth - el.clientWidth;
       if (maxScroll <= 0) return;
-      let next = el.scrollLeft + direction * step;
-      if (next >= maxScroll) {
-        next = maxScroll;
+      let nextScroll = el.scrollLeft + direction * step;
+      if (nextScroll >= maxScroll) {
+        nextScroll = maxScroll;
         direction = -1;
-      } else if (next <= 0) {
-        next = 0;
+      } else if (nextScroll <= 0) {
+        nextScroll = 0;
         direction = 1;
       }
-      el.scrollTo({ left: next, behavior: "smooth" });
+      el.scrollTo({ left: nextScroll, behavior: "smooth" });
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [carTypes.length]);
+
+  const showSkeleton = isLoading && carTypes.length === 0;
 
   return (
-    <section className="bg-background px-6 pt-0 pb-20 -mt-20">
-      <div className="mx-auto max-w-7xl pt-32">
-        <div className="mb-8 flex items-start justify-between gap-4">
+    <section className="-mt-14 bg-bg px-4 pb-12 pt-0 sm:-mt-20 sm:px-6 sm:pb-20">
+      <div className="mx-auto max-w-7xl pt-20 sm:pt-32">
+        <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
           <div>
-            <p
-              className="text-sm font-bold tracking-widest uppercase mb-1 text-font"
-            >
+            <p className="mb-1 text-sm font-bold uppercase tracking-widest text-font">
               Explore
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-light">
+            <h2 className="text-3xl font-bold text-primary-light md:text-4xl">
               Browse By Type
             </h2>
           </div>
 
-          <div className="flex items-center gap-3 mt-1 shrink-0">
+          <div className="mt-1 flex shrink-0 items-center gap-3">
             <Link
               href="/inventory"
-              className="text-sm font-semibold hover:underline hidden sm:block text-font"
+              className="hidden text-sm font-semibold text-font hover:underline sm:block"
             >
               See All Types →
             </Link>
-            <div className="hidden md:flex gap-1">
+            <div className="hidden gap-1 md:flex">
               <button
+                type="button"
                 onClick={prev}
                 disabled={!canPrev}
-                className={`w-8 h-8 flex items-center justify-center border transition-all ${
+                className={`flex h-8 w-8 items-center justify-center border transition-all ${
                   canPrev
-                    ? "border-gray-300 text-gray-600 hover:border-primary hover:text-primary"
-                    : "border-gray-200 text-gray-300 cursor-not-allowed"
+                    ? "border-line/40 text-font hover:border-primary hover:text-primary"
+                    : "cursor-not-allowed border-line/15 text-gray-mid"
                 }`}
               >
                 <ChevronLeft size={16} />
               </button>
               <button
+                type="button"
                 onClick={next}
                 disabled={!canNext}
-                className={`w-8 h-8 flex items-center justify-center border transition-all ${
+                className={`flex h-8 w-8 items-center justify-center border transition-all ${
                   canNext
-                    ? "border-gray-300 text-gray-600 hover:border-primary hover:text-primary"
-                    : "border-gray-200 text-gray-300 cursor-not-allowed"
+                    ? "border-line/40 text-font hover:border-primary hover:text-primary"
+                    : "cursor-not-allowed border-line/15 text-gray-mid"
                 }`}
               >
                 <ChevronRight size={16} />
@@ -150,96 +174,104 @@ export default function BrowseByType() {
           </div>
         </div>
 
-        <div className="md:hidden">
-          <div
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto snap-x snap-mandatory px-2 pb-6 touch-pan-x"
-          >
-            {carTypes.map((type, i) => (
-              <Link
-                key={`${type.label}-mobile`}
-                href={`/inventory?bodyType=${encodeURIComponent(type.label)}`}
-              >
-                <motion.div
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.35 }}
-                  className="group relative snap-center shrink-0 min-w-[75vw] overflow-hidden cursor-pointer aspect-[4/3]"
-                >
-                  {type.image ? (
-                    <Image
-                      src={type.image}
-                      alt={type.label}
-                      fill
-                      unoptimized
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gray-300" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 z-20">
-                    <p className="text-white font-bold text-sm leading-tight">
-                      {type.label}
-                    </p>
-                    <p className="text-white/70 text-xs mt-0.5">
-                      {type.count} Cars
-                    </p>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-30" />
-                </motion.div>
-              </Link>
-            ))}
+        {showSkeleton ? (
+          <div className="flex min-h-[220px] items-center justify-center py-12 md:min-h-[280px]">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
           </div>
-        </div>
-
-        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-5 gap-0.5">
-          <AnimatePresence mode="popLayout">
-            {visible.map((type, i) => (
-              <Link
-                key={type.label}
-                href={`/inventory?bodyType=${encodeURIComponent(type.label)}`}
+        ) : (
+          <>
+            <div className="md:hidden">
+              <div
+                ref={scrollRef}
+                className="flex touch-pan-x gap-4 overflow-x-auto px-0.5 pb-6 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
               >
-                <motion.div
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -30 }}
-                  transition={{ delay: i * 0.06, duration: 0.35 }}
-                  className="group relative overflow-hidden cursor-pointer aspect-[4/3]"
-                >
-                  {type.image ? (
-                    <Image
-                      src={type.image}
-                      alt={type.label}
-                      fill
-                      unoptimized
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gray-300" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-3 z-20">
-                    <p className="text-white font-bold text-sm leading-tight">
-                      {type.label}
-                    </p>
-                    <p className="text-white/70 text-xs mt-0.5">
-                      {type.count} Cars
-                    </p>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left z-30" />
-                </motion.div>
-              </Link>
-            ))}
-          </AnimatePresence>
-        </div>
+                {carTypes.map((type, i) => (
+                  <Link
+                    key={`${type.label}-mobile`}
+                    href={`/inventory?bodyType=${encodeURIComponent(type.label)}`}
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05, duration: 0.35 }}
+                      className="group relative aspect-[4/3] min-w-[75vw] shrink-0 cursor-pointer snap-center overflow-hidden"
+                    >
+                      {type.image ? (
+                        <Image
+                          src={type.image}
+                          alt={type.label}
+                          fill
+                          unoptimized
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gray-dark" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-primary/0 transition-colors duration-300 group-hover:bg-primary/15" />
+                      <div className="absolute bottom-0 left-0 right-0 z-20 p-3">
+                        <p className="text-sm font-bold leading-tight text-font">
+                          {type.label}
+                        </p>
+                        <p className="mt-0.5 text-xs text-font/70">
+                          {type.count} Cars
+                        </p>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 z-30 h-0.5 origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100" />
+                    </motion.div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="hidden gap-0.5 md:grid md:grid-cols-3 lg:grid-cols-5">
+              <AnimatePresence mode="popLayout">
+                {visible.map((type, i) => (
+                  <Link
+                    key={type.label}
+                    href={`/inventory?bodyType=${encodeURIComponent(type.label)}`}
+                  >
+                    <motion.div
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -30 }}
+                      transition={{ delay: i * 0.06, duration: 0.35 }}
+                      className="group relative aspect-[4/3] cursor-pointer overflow-hidden"
+                    >
+                      {type.image ? (
+                        <Image
+                          src={type.image}
+                          alt={type.label}
+                          fill
+                          unoptimized
+                          className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-gray-dark" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      <div className="absolute inset-0 bg-primary/0 transition-colors duration-300 group-hover:bg-primary/15" />
+                      <div className="absolute bottom-0 left-0 right-0 z-20 p-3">
+                        <p className="text-sm font-bold leading-tight text-font">
+                          {type.label}
+                        </p>
+                        <p className="mt-0.5 text-xs text-font/70">
+                          {type.count} Cars
+                        </p>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 z-30 h-0.5 origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100" />
+                    </motion.div>
+                  </Link>
+                ))}
+              </AnimatePresence>
+            </div>
+          </>
+        )}
 
         <div className="mt-5 sm:hidden">
           <Link
             href="/inventory"
-            className="text-sm font-semibold hover:underline text-font"
+            className="text-sm font-semibold text-font hover:underline"
           >
             See All Types →
           </Link>

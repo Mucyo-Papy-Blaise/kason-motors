@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
 
 type AdminTopbarProps = {
@@ -24,14 +24,13 @@ const getInitials = (fullName: string) =>
 
 export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
   const router = useRouter();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadTotal, setUnreadTotal] = useState(0);
 
   const fetchUnread = useCallback(async () => {
-    const { count } = await supabase
-      .from("contacts")
-      .select("*", { count: "exact", head: true })
-      .eq("read", false);
-    setUnreadCount(count ?? 0);
+    const res = await fetch("/api/admin/notifications/unread");
+    if (!res.ok) return;
+    const data = (await res.json()) as { total?: number };
+    setUnreadTotal(typeof data.total === "number" ? data.total : 0);
   }, []);
 
   useEffect(() => {
@@ -42,13 +41,22 @@ export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "contacts" },
-        () => setUnreadCount((prev) => prev + 1)
+        () => fetchUnread(),
       )
       .on(
         "postgres_changes",
-        // When any contact row is updated (e.g. read: true), re-fetch the real count
         { event: "UPDATE", schema: "public", table: "contacts" },
-        () => fetchUnread()
+        () => fetchUnread(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "book_test_driver" },
+        () => fetchUnread(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "book_test_driver" },
+        () => fetchUnread(),
       )
       .subscribe();
 
@@ -62,7 +70,6 @@ export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
       <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
 
       <div className="flex items-center gap-3">
-        {/* Search */}
         <div className="relative hidden md:block">
           <Search
             size={15}
@@ -75,32 +82,35 @@ export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
           />
         </div>
 
-        {/* Add Button */}
-        <button className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary-dark transition-colors shadow-md shadow-primary/20">
+        <button
+          type="button"
+          className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary-dark transition-colors shadow-md shadow-primary/20"
+        >
           <Plus size={16} />
         </button>
 
-        {/* Bell — shows only unread count, updates in real-time */}
         <button
+          type="button"
           onClick={() => router.push("/admin/notification")}
           className="relative w-8 h-8 bg-gray-50 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
-          title="View messages"
+          title="View notifications"
         >
           <Bell size={16} />
-          {unreadCount > 0 && (
+          {unreadTotal > 0 && (
             <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-[9px] font-bold px-0.5">
-              {unreadCount > 99 ? "99+" : unreadCount}
+              {unreadTotal > 99 ? "99+" : unreadTotal}
             </span>
           )}
         </button>
 
-        {/* Admin Profile */}
         <div className="flex items-center gap-2.5 pl-3 border-l border-gray-100">
           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xs">
             {getInitials(fullName)}
           </div>
           <div className="hidden md:block">
-            <p className="text-xs font-bold text-gray-900 leading-tight">{fullName}</p>
+            <p className="text-xs font-bold text-gray-900 leading-tight">
+              {fullName}
+            </p>
             <p className="text-xs text-gray-400">{roleLabel}</p>
           </div>
         </div>

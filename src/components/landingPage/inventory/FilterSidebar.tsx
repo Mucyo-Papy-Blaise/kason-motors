@@ -195,7 +195,7 @@ export function InventoryFiltersPanel({
         .filter-sidebar-scroll { scrollbar-width: thin; scrollbar-color: var(--color-line) transparent; }
       `}</style>
       <div
-        className={`rounded-2xl border border-line/25 bg-gray-dark p-3 sm:p-4 ${scrollClasses}`}
+        className={` border border-line/25 bg-gray-dark p-3 sm:p-4 ${scrollClasses}`}
       >
         <h2 className="mb-3 text-xs font-black uppercase tracking-widest text-font sm:mb-4">
           Filter by

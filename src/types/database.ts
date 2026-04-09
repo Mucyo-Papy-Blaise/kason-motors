@@ -88,6 +88,43 @@ export type Database = {
         Relationships: [];
       };
 
+      book_test_driver: {
+        Row: {
+          id: number;
+          car_id: number;
+          full_name: string;
+          email: string;
+          phone: string;
+          preferred_date: string;
+          notes: string | null;
+          created_at: string;
+          read: boolean;
+        };
+        Insert: {
+          id?: number;
+          car_id: number;
+          full_name: string;
+          email: string;
+          phone: string;
+          preferred_date: string;
+          notes?: string | null;
+          created_at?: string;
+          read?: boolean;
+        };
+        Update: {
+          id?: number;
+          car_id?: number;
+          full_name?: string;
+          email?: string;
+          phone?: string;
+          preferred_date?: string;
+          notes?: string | null;
+          created_at?: string;
+          read?: boolean;
+        };
+        Relationships: [];
+      };
+
       // ✅ CONTACT / MESSAGES TABLE (phonenumber added)
       messages: {
         Row: {

@@ -104,58 +104,51 @@ export default function Contact() {
   };
 
   const inputClass = (field: keyof ContactFormData) =>
-    `w-full bg-white border rounded px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-primary transition ${
-      errors[field] ? "border-red-400" : "border-gray-300"
+    `w-full rounded-lg border bg-bg px-3 py-2.5 text-sm text-font placeholder:text-gray-mid focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 transition ${
+      errors[field] ? "border-primary" : "border-line/30"
     }`;
 
-  const labelClass = "block text-xs font-medium text-gray-600 mb-1";
+  const labelClass = "mb-1 block text-xs font-medium text-font/85";
 
   const ErrorMsg = ({ field }: { field: keyof ContactFormData }) =>
     errors[field] ? (
-      <p className="mt-1 text-xs text-red-500">{errors[field]}</p>
+      <p className="mt-1 text-xs text-accent">{errors[field]}</p>
     ) : null;
 
   return (
-    <div className="min-h-screen bg-white">
-      <ToastContainer />
-<Navbar/>
+    <div className="min-h-screen bg-bg text-font">
+      <ToastContainer theme="dark" className="!top-20" />
+      <Navbar />
       {/* ─── Hero Section ─── */}
-      <section className="relative w-full h-[420px] overflow-hidden">
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/55 z-10" />
+      <section className="relative h-[min(52vh,420px)] w-full overflow-hidden">
+        <div className="absolute inset-0 z-10 bg-ink/60" />
 
-        {/* Background image — replace src with your actual showroom image */}
         <img
           src="/marcedes.jpg"
           alt="Car showroom"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
         />
 
-        {/* Hero text */}
-        <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-white tracking-wide">
+        <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center">
+          <h1 className="text-3xl font-bold tracking-wide text-font md:text-4xl">
             Experience Our Service
           </h1>
-          <p className="mt-3 text-sm text-white/80">Schedule a visit</p>
+          <p className="mt-3 text-sm text-font/80">Schedule a visit</p>
         </div>
       </section>
 
-      {/* ─── Get In Touch Section ─── */}
-      <section className="bg-gray-50 py-14 px-4">
-        <div className="max-w-4xl mx-auto">
-          {/* Section heading */}
-          <div className="text-center mb-10">
-            <h2 className="text-2xl font-bold text-gray-900">Get In Touch</h2>
-            <p className="text-sm text-gray-500 mt-1">
+      <section className="bg-bg px-4 py-12 sm:py-14">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 text-center">
+            <h2 className="text-2xl font-bold text-font">Get In Touch</h2>
+            <p className="mt-1 text-sm text-font/75">
               Have questions or want to schedule a test drive? Our team is ready
               to assist you.
             </p>
           </div>
 
-          {/* Map + Form side-by-side */}
-          <div className="flex flex-col md:flex-row gap-6 items-stretch">
-            {/* Map */}
-            <div className="flex-1 min-h-[360px] rounded-lg overflow-hidden border border-gray-200 shadow-sm">
+          <div className="flex flex-col items-stretch gap-6 md:flex-row">
+            <div className="min-h-[280px] flex-1 overflow-hidden  border border-line/25 bg-gray-dark shadow-sm sm:min-h-[360px]">
               <iframe
                 title="Our Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.4956836786455!2d30.05887!3d-1.94995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwNTYnNTkuOCJTIDMwwrAwMyczMS45IkU!5e0!3m2!1sen!2srw!4v1681234567890!5m2!1sen!2srw"
@@ -168,9 +161,8 @@ export default function Contact() {
               />
             </div>
 
-            {/* Form card */}
-            <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-              <h3 className="text-base mb-5 font-semibold text-gray-800 mb-0.5">
+            <div className="flex-1 border border-line/25 bg-gray-dark p-5 shadow-sm sm:p-6">
+              <h3 className="mb-5 text-base font-semibold text-font">
                 Send us a message
               </h3>
 
@@ -234,7 +226,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSending}
-                  className="w-full bg-primary cursor-pointer py-3.5 text-sm font-bold text-white transition-colors hover:bg-primary-dark disabled:opacity-70"
+                  className="w-full cursor-pointer bg-primary py-3.5 text-sm font-bold text-font transition-colors hover:bg-primary-dark disabled:opacity-70"
                 >
                   {isSending ? "Sending..." : "Send Message"}
                 </button>
@@ -243,7 +235,7 @@ export default function Contact() {
           </div>
         </div>
       </section>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

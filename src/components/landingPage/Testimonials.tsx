@@ -1,12 +1,42 @@
 "use client";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { testimonials } from "@/lib/mockData";
 
 export default function Testimonials() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el || typeof window === "undefined") return;
+    if (window.innerWidth >= 768) return;
+    if (testimonials.length === 0) return;
+
+    const step = el.clientWidth * 0.9;
+    let direction = 1;
+    const interval = setInterval(() => {
+      const maxScroll = el.scrollWidth - el.clientWidth;
+      if (maxScroll <= 0) return;
+
+      let nextScroll = el.scrollLeft + direction * step;
+      if (nextScroll >= maxScroll) {
+        nextScroll = maxScroll;
+        direction = -1;
+      } else if (nextScroll <= 0) {
+        nextScroll = 0;
+        direction = 1;
+      }
+
+      el.scrollTo({ left: nextScroll, behavior: "smooth" });
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <section className="py-20 px-6 bg-background">
+    <section className="bg-background px-4 py-12 sm:px-6 sm:py-20">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
+        <div className="mb-8 text-center sm:mb-12">
           <p
             className="text-sm font-bold tracking-widest uppercase mb-2 text-font"
           >
@@ -17,7 +47,51 @@ export default function Testimonials() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:hidden">
+          <div
+            ref={scrollRef}
+            className="flex touch-pan-x gap-4 overflow-x-auto pb-4 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {testimonials.map((t, i) => (
+              <div
+                key={`${t.id}-mobile`}
+                className="w-[min(88vw,22rem)] shrink-0 snap-center"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.08, duration: 0.35 }}
+                  className="border border-gray-100/10 p-6 shadow-sm transition-all"
+                >
+                  <div className="mb-3 flex">
+                    {[...Array(t.rating)].map((_, j) => (
+                      <span key={j} className="text-font">
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <p className="mb-5 text-sm leading-relaxed text-gray-light/70">
+                    &quot;{t.text}&quot;
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-font/70">
+                      {t.avatar}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-primary-dark">
+                        {t.name}
+                      </p>
+                      <p className="text-xs text-gray-300">{t.role}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="hidden grid-cols-1 gap-4 sm:gap-6 md:grid md:grid-cols-3">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.id}
@@ -26,29 +100,27 @@ export default function Testimonials() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.15, duration: 0.5 }}
               whileHover={{ y: -5 }}
-              className="p-6 border border-gray-100/10 shadow-sm hover:shadow-lg transition-all"
+              className="border border-gray-100/10 p-6 shadow-sm transition-all hover:shadow-lg"
             >
-              <div className="flex mb-3">
+              <div className="mb-3 flex">
                 {[...Array(t.rating)].map((_, j) => (
                   <span key={j} className="text-font">
                     ★
                   </span>
                 ))}
               </div>
-              <p className="text-gray-light/70 text-sm leading-relaxed mb-5">
+              <p className="mb-5 text-sm leading-relaxed text-gray-light/70">
                 &quot;{t.text}&quot;
               </p>
               <div className="flex items-center gap-3">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-font/70 font-bold text-sm"
-                >
+                <div className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-font/70">
                   {t.avatar}
                 </div>
                 <div>
-                  <p className="font-semibold text-primary-dark text-sm">
+                  <p className="text-sm font-semibold text-primary-dark">
                     {t.name}
                   </p>
-                  <p className="text-gray-300 text-xs">{t.role}</p>
+                  <p className="text-xs text-gray-300">{t.role}</p>
                 </div>
               </div>
             </motion.div>
