@@ -99,24 +99,24 @@ export default function Footer() {
             <ul className="space-y-3.5">
               <li>
                 <a
-                  href="tel:+250791000000"
+                  href="tel:+250799525895 / +8613181067790"
                   className="flex items-start gap-3 text-white/40 text-sm hover:text-white transition-colors group"
                 >
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Phone size={12} className="text-primary" />
                   </span>
-                  +250 791 000 000
+                  250799525895 / +8613181067790
                 </a>
               </li>
               <li>
                 <a
-                  href="mailto:info@kasonmotors.rw"
+                  href="mailto:daniel@kasonev.com"
                   className="flex items-start gap-3 text-white/40 text-sm hover:text-white transition-colors group"
                 >
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Mail size={12} className="text-primary" />
                   </span>
-                  info@kasonmotors.rw
+                  daniel@kasonev.com
                 </a>
               </li>
               <li>

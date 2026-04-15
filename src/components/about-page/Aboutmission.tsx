@@ -15,14 +15,12 @@ const Stat = ({ value, label, sub }: StatProps) => (
     </span>
     <div>
       <p className="font-bold text-font text-base leading-tight">{label}</p>
-      <p className="text-gray-mid text-sm mt-1 leading-snug max-w-50">
-        {sub}
-      </p>
+      <p className="text-gray-mid text-sm mt-1 leading-snug max-w-50">{sub}</p>
     </div>
   </div>
 );
 
-export const AboutMission  = () => (
+export const AboutMission = () => (
   <section className="py-20 bg-bg">
     <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
       {/* Text */}
@@ -34,30 +32,46 @@ export const AboutMission  = () => (
           Our Mission &amp; Vision
         </h2>
         <p className="text-gray-mid leading-relaxed mb-4 text-sm">
-          Kason Motor Ltd is an automotive and green mobility company
-          headquartered in the Kigali Special Economic Zone (KSEZ) Phase 2 in
-          Masoro, Ndera, Kigali. We operate at the intersection of vehicle
-          distribution and sustainable transport solutions, positioning
-          ourselves as a key player in Rwanda&apos;s transition toward cleaner
-          mobility.
+          Kason Motor was established in 2014 and is one of the leading car
+          exporters in China. With the vehicle export qualification certified by
+          the Ministry of Commerce in China, we have been professionally
+          specialized in the sales and service of new energy cars and gasoline
+          cars for over 10 years.
+        </p>
+        <p className="text-gray-mid leading-relaxed mb-4 text-sm">
+          We have our head office in Liaocheng, Shandong, as well as
+          representative offices in Khorgos, Tashkent, Moscow and 4 African
+          cities. Our experienced staff are well trained with professional
+          technology and ready to provide any support warmly at any time.
         </p>
         <p className="text-gray-mid leading-relaxed text-sm mb-8">
-          Our mission is to drive electrification in Rwanda by delivering
-          customized, sustainable mobility solutions — and to become a leading
-          force in Rwanda&apos;s transition to cleaner, smarter transportation,
-          serving as a pioneer in green mobility collaboration.
+          Kason Motor has its own stable and matured supply system and
+          professional technical support as well as before and after-sales
+          service — always aiming to make every customer enjoy a wonderful and
+          satisfactory purchasing experience. We sincerely look forward to
+          establishing long-term stable business partnerships with you.
         </p>
 
         <div className="space-y-6">
           <Stat
-            value="38+"
-            label="Years on the Market"
-            sub="Founded in 1986 in Liaocheng, Shandong, China — decades of automotive expertise."
+            value="10+"
+            label="Years of Export Experience"
+            sub="Professionally exporting new energy and gasoline vehicles since 2014."
           />
           <Stat
-            value="6+"
-            label="Vehicle Categories"
-            sub="From luxury cars to commercial vehicles and New Energy Vehicles (NEVs)."
+            value="8"
+            label="Sales Offices Worldwide"
+            sub="Head office in Shandong, China, plus offices in Central Asia, Russia & Africa."
+          />
+          <Stat
+            value="50+"
+            label="Cooperative Brands"
+            sub="A wide portfolio of trusted vehicle brands to meet every customer need."
+          />
+          <Stat
+            value="1,000+"
+            label="Units Exported Each Year"
+            sub="Mainly exported to Middle Asia, Russia, the Middle East and African markets."
           />
         </div>
       </div>
@@ -75,7 +89,7 @@ export const AboutMission  = () => (
         <div className="absolute -bottom-5 -left-5 bg-primary text-font rounded-xl px-5 py-4 shadow-lg">
           <p className="text-2xl font-black">100%</p>
           <p className="text-xs font-semibold text-accent mt-0.5">
-            Factory-Backed Guarantee
+            Ministry of Commerce Certified
           </p>
         </div>
       </div>

@@ -1,3 +1,4 @@
+// File: components/about/AboutServices.tsx
 "use client";
 
 import React from "react";
@@ -84,7 +85,7 @@ const TruckIcon = () => (
   </svg>
 );
 
-const CreditIcon = () => (
+const ShieldIcon = () => (
   <svg
     width="18"
     height="18"
@@ -93,8 +94,7 @@ const CreditIcon = () => (
     stroke="currentColor"
     strokeWidth="2"
   >
-    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-    <line x1="1" y1="10" x2="23" y2="10" />
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
 
@@ -116,62 +116,63 @@ const SERVICES: ServiceCardProps[] = [
   {
     icon: <CarIcon />,
     number: "01",
-    title: "Vehicle Products",
+    title: "New Energy & Gasoline Vehicles",
     items: [
-      "Luxury & executive cars",
-      "Mid-size, compact & mini cars",
-      "Commercial vehicles",
+      "Luxury, executive & mid-size cars",
+      "Compact, mini & commercial vehicles",
       "New Energy Vehicles (NEVs & PHEVs)",
+      "50+ cooperative brands available",
     ],
   },
   {
     icon: <ZapIcon />,
     number: "02",
-    title: "Charging & Energy Solutions",
+    title: "Competitive Pricing & Fast Delivery",
     items: [
-      "Smart home charging systems",
-      "Public fast-charging stations",
-      "Customized solutions for homes, businesses & fleets",
+      "Factory-direct pricing advantages",
+      "Sea shipping logistics managed end-to-end",
+      "1,000+ units exported annually",
+      "Serving Middle Asia, Russia, Middle East & Africa",
     ],
   },
   {
     icon: <WrenchIcon />,
     number: "03",
-    title: "After-Sales & Technical Services",
+    title: "After-Sales & Spare Parts",
     items: [
-      "Professional maintenance & repair",
-      "Reliable spare parts supply",
-      "Technical support for EVs & conventional vehicles",
+      "Reliable genuine spare parts supply",
+      "Excellent after-sales support",
+      "Technical assistance for EVs & conventional vehicles",
     ],
   },
   {
     icon: <TruckIcon />,
     number: "04",
-    title: "Fleet & Operational Solutions",
+    title: "Fleet & Commercial Solutions",
     items: [
-      "Full lifecycle fleet management",
+      "Large-scale fleet acquisition & management",
       "Solutions for government, embassies & logistics",
-      "Performance monitoring & optimization",
+      "Commercial vehicle supply for industry & SMEs",
     ],
   },
   {
-    icon: <CreditIcon />,
+    icon: <ShieldIcon />,
     number: "05",
-    title: "Financial & Business Support",
+    title: "Finance & Payment Support",
     items: [
-      "Flexible financing for individuals & businesses",
-      "Large-scale fleet acquisition support",
-      "Advisory on EV transition",
+      "Strong financing support for individuals & businesses",
+      "Various payment collection channels",
+      "Flexible terms for large-scale procurement",
     ],
   },
   {
     icon: <GlobeIcon />,
     number: "06",
-    title: "Integrated Mobility Solutions",
+    title: "Global Export Experience",
     items: [
-      "Localized EV solutions for Rwanda & East Africa",
-      "Vehicles + charging + services + financing",
-      "Long-term sustainable mobility partnerships",
+      "10+ years of professional export experience",
+      "8 sales offices across different countries",
+      "Ministry of Commerce certified export qualification",
     ],
   },
 ];
@@ -184,11 +185,12 @@ export const AboutServices: React.FC = () => (
           What We Offer
         </span>
         <h2 className="text-3xl font-bold text-font">
-          A Complete Mobility Ecosystem
+          A Trusted Automotive Partner
         </h2>
         <p className="text-gray-mid text-sm mt-3 max-w-xl mx-auto">
-          Beyond selling cars — we deliver end-to-end solutions from vehicle
-          acquisition to daily operations and long-term sustainability.
+          More than a car exporter — Kason Motor delivers end-to-end vehicle
+          solutions backed by over a decade of experience, factory-level support,
+          and a stable global supply chain.
         </p>
       </div>
 
@@ -196,7 +198,7 @@ export const AboutServices: React.FC = () => (
         {SERVICES.map((s) => (
           <ServiceCard key={s.number} {...s} />
         ))}
-      </div>
+    </div>
     </div>
   </section>
 );

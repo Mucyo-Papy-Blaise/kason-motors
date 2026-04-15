@@ -6,6 +6,7 @@ import { AboutStrengths } from "./Aboutstrengths";
 import { AboutCta } from "./Aboutcta";
 import Navbar from "../landingPage/Navbar";
 import Footer from "../landingPage/Footer";
+import { AboutClients } from "./AboutClients";
 
 export const AboutPage = () => (
   <>
@@ -15,6 +16,7 @@ export const AboutPage = () => (
     <AboutServices />
     <AboutAudience />
     <AboutStrengths />
+    {/* <AboutClients/> */}
     <AboutCta />
     <Footer />
   </>

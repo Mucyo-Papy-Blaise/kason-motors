@@ -11,39 +11,39 @@ interface StrengthCardProps {
 const STRENGTHS: StrengthCardProps[] = [
   {
     number: "01",
-    title: "Factory-Backed Guarantee",
+    title: "Competitive Prices",
     description:
-      "All vehicles are supported by direct manufacturer guarantees — authentic, high-quality products with reliable warranties.",
+      "Factory-direct sourcing and a mature supply chain allow us to offer highly competitive pricing across all vehicle categories — new energy and gasoline alike.",
   },
   {
     number: "02",
-    title: "Direct Factory Expertise",
+    title: "Fast Delivery",
     description:
-      "Technical support from factory-trained experts with up-to-date knowledge of the latest vehicle and EV technologies.",
+      "With established sea shipping routes and logistics experience built over 10+ years, we ensure timely and reliable delivery to customers across Africa, the Middle East, Central Asia and Russia.",
   },
   {
     number: "03",
-    title: "Longstanding Experience Since 1986",
+    title: "Strong Finance Support",
     description:
-      "Built on a foundation of decades of experience with a deep understanding of African market conditions and customer needs.",
+      "We provide strong financing options tailored to both individual buyers and large-scale fleet procurement, making vehicle acquisition accessible and flexible.",
   },
   {
     number: "04",
-    title: "Reliable Spare Parts Availability",
+    title: "Various Payment Collection Channels",
     description:
-      "Strong and stable spare parts supply chain with quick access to genuine parts, reducing downtime for customers and fleets.",
+      "We support multiple international payment methods, making transactions smooth and convenient for clients across different regions and banking systems.",
   },
   {
     number: "05",
-    title: "Professional & Skilled Team",
+    title: "Excellent After-Sales Service",
     description:
-      "Highly trained local and international staff with expertise across sales, technical support, EV systems, and fleet management.",
+      "Our dedicated after-sales team provides ongoing support, technical assistance, and maintenance guidance to ensure every customer's long-term satisfaction.",
   },
   {
     number: "06",
-    title: "Complete Mobility Ecosystem",
+    title: "Spare Parts Supply",
     description:
-      "Unlike competitors who only sell vehicles, we provide vehicles, charging infrastructure, after-sales service, financing and fleet solutions.",
+      "We maintain a stable and mature spare parts supply chain, ensuring fast access to genuine components and minimising vehicle downtime for our clients.",
   },
 ];
 
@@ -56,13 +56,13 @@ export const AboutStrengths = () => (
     <div className="relative max-w-6xl mx-auto px-6">
       <div className="text-center mb-14">
         <span className="text-accent text-xs font-bold tracking-[0.2em] uppercase block mb-3">
-          Our Competitive Edge
+          Why Choose Us
         </span>
-        <h2 className="text-3xl font-bold text-font">What Makes Us Unique</h2>
+        <h2 className="text-3xl font-bold text-font">Our Service Advantages</h2>
         <p className="text-font/60 text-sm mt-3 max-w-lg mx-auto">
-          Kason Motor differentiates itself through factory-level support,
-          decades of experience, and full-service capability tailored to
-          Rwanda&apos;s evolving market.
+          Kason Motor is built on reliability, competitive value, and a
+          customer-first approach — backed by over a decade of proven export
+          experience.
         </p>
       </div>
 

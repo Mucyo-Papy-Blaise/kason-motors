@@ -9,6 +9,8 @@ export const BRAND_OPTIONS = [
   "Hyundai",
   "Kia",
   "Ford",
+  "BDY",
+  "Dongfeng"
 ] as const;
 
 export const CONDITION_OPTIONS = ["New", "Used", "Certified"] as const;
