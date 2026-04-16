@@ -132,7 +132,7 @@ export default function Footer() {
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Globe size={12} className="text-primary" />
                   </span>
-                  www.kasonev.en.alibaba.com
+                  www.kasonev.com
                 </a>
               </li>
 
