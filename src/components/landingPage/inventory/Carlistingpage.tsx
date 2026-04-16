@@ -382,6 +382,7 @@ export const CarListingPage: React.FC = () => {
           </>
         ) : null}
       </AnimatePresence>
+      
     </main>
   );
 };

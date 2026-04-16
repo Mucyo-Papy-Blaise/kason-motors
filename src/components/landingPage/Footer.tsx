@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Phone, Mail, Clock, ArrowUpRight } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Globe } from "lucide-react";
 import {
   FaInstagram,
   FaFacebookF,
@@ -99,15 +99,16 @@ export default function Footer() {
             <ul className="space-y-3.5">
               <li>
                 <a
-                  href="tel:+250799525895 / +8613181067790"
+                  href="tel:+250799525895"
                   className="flex items-start gap-3 text-white/40 text-sm hover:text-white transition-colors group"
                 >
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Phone size={12} className="text-primary" />
                   </span>
-                  250799525895 / +8613181067790
+                  +250 799 525 895 
                 </a>
               </li>
+
               <li>
                 <a
                   href="mailto:daniel@kasonev.com"
@@ -119,20 +120,37 @@ export default function Footer() {
                   daniel@kasonev.com
                 </a>
               </li>
+
+              {/* Website (NEW) */}
+              <li>
+                <a
+                  href="https://kasonev.en.alibaba.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 text-white/40 text-sm hover:text-white transition-colors group"
+                >
+                  <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <Globe size={12} className="text-primary" />
+                  </span>
+                  www.kasonev.en.alibaba.com
+                </a>
+              </li>
+
               <li>
                 <div className="flex items-start gap-3 text-white/40 text-sm">
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
                     <MapPin size={12} className="text-primary" />
                   </span>
-                  KG 11 Ave, Kigali, Rwanda
+                  Kigali, KG 1511 St, CHINA EV MALL Special Economic Zone
                 </div>
               </li>
+
               <li>
                 <div className="flex items-start gap-3 text-white/40 text-sm">
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
                     <Clock size={12} className="text-primary" />
                   </span>
-                  Mon–Fri: 8:00–17:00
+                  Monday - Sunday
                 </div>
               </li>
             </ul>

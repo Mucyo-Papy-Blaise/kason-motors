@@ -7,7 +7,7 @@ export const AboutHero = () => (
       className="absolute inset-0 bg-cover bg-center scale-105"
       style={{
         backgroundImage:
-          "url('https://images.unsplash.com/photo-1620288627223-53302f4e8c74?w=1600&q=80')",
+          "url('https://images.unsplash.com/flagged/photo-1564153296137-400b51e1ff6d?q=80&w=915&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
       }}
     />
     <div className="absolute inset-0 bg-linear-to-b from-primary-dark/85 via-primary/60 to-ink/80" />

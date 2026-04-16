@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { CarListingPage } from "@/components/landingPage/inventory/Carlistingpage";
+import Navbar from "@/components/landingPage/Navbar";
 
 export default function InventoryPage() {
   return (
@@ -13,6 +14,7 @@ export default function InventoryPage() {
       }
     >
       <CarListingPage />
+      
     </Suspense>
   );
 }

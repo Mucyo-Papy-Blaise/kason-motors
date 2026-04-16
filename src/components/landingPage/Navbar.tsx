@@ -88,14 +88,14 @@ export default function Navbar({ user }: NavbarProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-3 sm:gap-5 text-xs text-font/60">
           <span className="flex items-center gap-1.5">
             <MapPin size={12} />
-            <span className="hidden sm:inline">KG 11 Ave, Kigali, Rwanda</span>
-            <span className="sm:hidden">Kigali, RW</span>
+            <span className="hidden sm:inline">KG 1511 St</span>
+            <span className="sm:hidden">CHINA EV MALL Special Economic Zone</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <Phone size={12} /> +250 791 000 000
+            <Phone size={12} /> +250 799 525 895 
           </span>
           <span className="hidden md:flex items-center gap-1.5">
-            <Clock size={12} /> Mon–Fri: 8:00–17:00
+            <Clock size={12} /> Monday - Sunday
           </span>
         </div>
       </div>
