@@ -137,7 +137,7 @@ export default function Footer() {
               </li>
 
               <li>
-                <a
+                <Link
                   href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x19dca7d0eecde367:0x8fd44212ce17858?entry=s&sa=X&ved=2ahUKEwiH4JnKjKOUAxVtU6QEHXKWCbEQ4kB6BAgSEAA&hl=en"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -147,7 +147,7 @@ export default function Footer() {
                     <MapPin size={12} className="text-primary" />
                   </span>
                   Kigali, KG 1511 St, CHINA EV MALL Special Economic Zone
-                </a>
+                </Link>
               </li>
 
               <li>
