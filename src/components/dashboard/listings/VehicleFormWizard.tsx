@@ -15,7 +15,10 @@ import {
   SEAT_OPTIONS,
   TRANSMISSION_OPTIONS,
 } from "@/components/dashboard/listings/vehicleFormOptions";
-import { uploadVehicleImages, uploadVehicleVideo } from "@/lib/uploadVehicleImages";
+import {
+  uploadVehicleImages,
+  uploadVehicleVideo,
+} from "@/lib/uploadVehicleImages";
 import { VehicleFormData, vehicleFormSchema } from "@/lib/vehicleFormSchema";
 import { EMPTY_FORM, FormErrors } from "@/types/car";
 import { useMemo, useRef, useState } from "react";
@@ -35,7 +38,9 @@ type SelectFieldProps = {
   value: string | undefined;
   options: readonly string[];
   error?: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onChange: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => void;
 };
 
 const REQUIRED_FIELDS_BY_STEP: Record<number, (keyof VehicleFormData)[]> = {
@@ -45,17 +50,28 @@ const REQUIRED_FIELDS_BY_STEP: Record<number, (keyof VehicleFormData)[]> = {
   3: ["price", "description", "image", "imageUrls"],
 };
 
-function SelectField({ label, name, value, options, error, onChange }: SelectFieldProps) {
+function SelectField({
+  label,
+  name,
+  value,
+  options,
+  error,
+  onChange,
+}: SelectFieldProps) {
   return (
     <div>
-      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">{label}</label>
+      <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+        {label}
+      </label>
       <div className="relative">
         <select
           name={name}
           value={value ?? ""}
           onChange={onChange}
           className={`w-full bg-white border rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 shadow-sm appearance-none cursor-pointer ${
-            error ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-primary hover:border-primary/50"
+            error
+              ? "border-red-400 focus:ring-red-400"
+              : "border-gray-200 focus:ring-primary hover:border-primary/50"
           }`}
         >
           <option value="">{`Select ${label}`}</option>
@@ -89,29 +105,48 @@ export default function VehicleFormWizard({
     features: initialData?.features ?? [],
     imageUrls: initialData?.imageUrls ?? [],
   } as VehicleFormData);
-  const [selectedImages, setSelectedImages] = useState<string[]>(initialData?.imageUrls ?? []);
-  const [selectedVideo, setSelectedVideo] = useState<string>(initialData?.videoUrl ?? "");
-  const [selectedVideoName, setSelectedVideoName] = useState<string>(
-    initialData?.videoUrl ? "Current uploaded video" : ""
+  const [selectedImages, setSelectedImages] = useState<string[]>(
+    initialData?.imageUrls ?? [],
   );
-  const canPreviewVideo = selectedVideo.startsWith("data:video/") || selectedVideo.startsWith("http");
+  const [selectedVideo, setSelectedVideo] = useState<string>(
+    initialData?.videoUrl ?? "",
+  );
+  const [selectedVideoName, setSelectedVideoName] = useState<string>(
+    initialData?.videoUrl ? "Current uploaded video" : "",
+  );
+  const canPreviewVideo =
+    selectedVideo.startsWith("data:video/") || selectedVideo.startsWith("http");
   const selectedFeatures = form.features ?? [];
 
   const inputClass = (field: keyof VehicleFormData) =>
     `w-full bg-white border rounded-lg px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 shadow-sm ${
-      errors[field as keyof FormErrors] ? "border-red-400 focus:ring-red-400" : "border-gray-200 focus:ring-primary hover:border-primary/50"
+      errors[field as keyof FormErrors]
+        ? "border-red-400 focus:ring-red-400"
+        : "border-gray-200 focus:ring-primary hover:border-primary/50"
     }`;
 
-  const canGoNext = useMemo(() => currentStep < STEPS.length - 1, [currentStep]);
+  const canGoNext = useMemo(
+    () => currentStep < STEPS.length - 1,
+    [currentStep],
+  );
   const canGoBack = useMemo(() => currentStep > 0, [currentStep]);
 
-  const validateField = (name: keyof VehicleFormData, value: VehicleFormData[keyof VehicleFormData]) => {
+  const validateField = (
+    name: keyof VehicleFormData,
+    value: VehicleFormData[keyof VehicleFormData],
+  ) => {
     const result = vehicleFormSchema.safeParse({ ...form, [name]: value });
-    const message = !result.success ? result.error.flatten().fieldErrors[name]?.[0] : undefined;
+    const message = !result.success
+      ? result.error.flatten().fieldErrors[name]?.[0]
+      : undefined;
     setErrors((prev) => ({ ...prev, [name]: message }));
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     if (submitted) {
@@ -144,7 +179,9 @@ export default function VehicleFormWizard({
     }
   };
 
-  const handleVideoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) {
       return;
@@ -184,7 +221,9 @@ export default function VehicleFormWizard({
 
     const stepErrors: FormErrors = {};
     for (const field of fields) {
-      const fieldMessage = !result.success ? result.error.flatten().fieldErrors[field]?.[0] : undefined;
+      const fieldMessage = !result.success
+        ? result.error.flatten().fieldErrors[field]?.[0]
+        : undefined;
       if (fieldMessage) {
         stepErrors[field as keyof FormErrors] = fieldMessage;
       }
@@ -213,11 +252,17 @@ export default function VehicleFormWizard({
     }
     submitRequestedRef.current = false;
     setSubmitted(true);
-    const result = vehicleFormSchema.safeParse({ ...form, imageUrls: selectedImages, image: selectedImages[0] ?? "" });
+    const result = vehicleFormSchema.safeParse({
+      ...form,
+      imageUrls: selectedImages,
+      image: selectedImages[0] ?? "",
+    });
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
-      for (const [key, messages] of Object.entries(result.error.flatten().fieldErrors)) {
+      for (const [key, messages] of Object.entries(
+        result.error.flatten().fieldErrors,
+      )) {
         fieldErrors[key as keyof FormErrors] = messages?.[0];
       }
       setErrors(fieldErrors);
@@ -227,7 +272,9 @@ export default function VehicleFormWizard({
     try {
       setIsSubmitting(true);
       const uploadedImages = await uploadVehicleImages(selectedImages);
-      const uploadedVideoUrl = selectedVideo ? await uploadVehicleVideo(selectedVideo) : "";
+      const uploadedVideoUrl = selectedVideo
+        ? await uploadVehicleVideo(selectedVideo)
+        : "";
       await onSubmit({
         ...result.data,
         image: uploadedImages[0] ?? "",
@@ -249,15 +296,27 @@ export default function VehicleFormWizard({
   };
 
   return (
-    <form onSubmit={submitForm} onKeyDown={handleFormKeyDown} className="space-y-6">
+    <form
+      onSubmit={submitForm}
+      onKeyDown={handleFormKeyDown}
+      className="space-y-6"
+    >
       <div className="flex items-center gap-2">
         {STEPS.map((step, index) => (
           <div key={step} className="flex items-center gap-2">
-            <div className={`h-7 w-7 rounded-full text-xs font-bold flex items-center justify-center ${index <= currentStep ? "bg-primary text-white" : "bg-gray-100 text-gray-400"}`}>
+            <div
+              className={`h-7 w-7 rounded-full text-xs font-bold flex items-center justify-center ${index <= currentStep ? "bg-primary text-white" : "bg-gray-100 text-gray-400"}`}
+            >
               {index + 1}
             </div>
-            <span className={`text-xs ${index <= currentStep ? "text-primary font-semibold" : "text-gray-400"}`}>{step}</span>
-            {index < STEPS.length - 1 ? <div className="w-5 h-px bg-gray-200" /> : null}
+            <span
+              className={`text-xs ${index <= currentStep ? "text-primary font-semibold" : "text-gray-400"}`}
+            >
+              {step}
+            </span>
+            {index < STEPS.length - 1 ? (
+              <div className="w-5 h-px bg-gray-200" />
+            ) : null}
           </div>
         ))}
       </div>
@@ -268,43 +327,133 @@ export default function VehicleFormWizard({
       {currentStep === 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Title <span className="text-red-500">*</span></label>
-            <input name="title" value={form.title} onChange={handleChange} className={inputClass("title")} />
-            {errors.title ? <p className="mt-1.5 text-xs text-red-500">{errors.title}</p> : null}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              className={inputClass("title")}
+            />
+            {errors.title ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.title}</p>
+            ) : null}
           </div>
-          <SelectField label="Brand / Make *" name="brand" value={form.brand} options={BRAND_OPTIONS} error={errors.brand} onChange={handleChange} />
+          <SelectField
+            label="Brand / Make *"
+            name="brand"
+            value={form.brand}
+            options={BRAND_OPTIONS}
+            error={errors.brand}
+            onChange={handleChange}
+          />
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Model <span className="text-red-500">*</span></label>
-            <input name="model" value={form.model} onChange={handleChange} className={inputClass("model")} />
-            {errors.model ? <p className="mt-1.5 text-xs text-red-500">{errors.model}</p> : null}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Model <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="model"
+              value={form.model}
+              onChange={handleChange}
+              className={inputClass("model")}
+            />
+            {errors.model ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.model}</p>
+            ) : null}
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Year <span className="text-red-500">*</span></label>
-            <input name="year" value={form.year} onChange={handleChange} className={inputClass("year")} />
-            {errors.year ? <p className="mt-1.5 text-xs text-red-500">{errors.year}</p> : null}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Year <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="year"
+              value={form.year}
+              onChange={handleChange}
+              className={inputClass("year")}
+            />
+            {errors.year ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.year}</p>
+            ) : null}
           </div>
-          <SelectField label="Condition *" name="condition" value={form.condition} options={CONDITION_OPTIONS} error={errors.condition} onChange={handleChange} />
-          <SelectField label="Body Type *" name="bodyType" value={form.bodyType} options={BODY_TYPE_OPTIONS} error={errors.bodyType} onChange={handleChange} />
+          <SelectField
+            label="Condition *"
+            name="condition"
+            value={form.condition}
+            options={CONDITION_OPTIONS}
+            error={errors.condition}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Body Type *"
+            name="bodyType"
+            value={form.bodyType}
+            options={BODY_TYPE_OPTIONS}
+            error={errors.bodyType}
+            onChange={handleChange}
+          />
         </div>
       ) : null}
 
       {currentStep === 1 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Mileage (km) <span className="text-red-500">*</span></label>
-            <input name="mileage" value={form.mileage} onChange={handleChange} className={inputClass("mileage")} />
-            {errors.mileage ? <p className="mt-1.5 text-xs text-red-500">{errors.mileage}</p> : null}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Mileage (km) <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="mileage"
+              value={form.mileage}
+              onChange={handleChange}
+              className={inputClass("mileage")}
+            />
+            {errors.mileage ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.mileage}</p>
+            ) : null}
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Engine Size <span className="text-red-500">*</span></label>
-            <input name="engineSize" value={form.engineSize} onChange={handleChange} className={inputClass("engineSize")} placeholder="2.0L" />
-            {errors.engineSize ? <p className="mt-1.5 text-xs text-red-500">{errors.engineSize}</p> : null}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Engine Size <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="engineSize"
+              value={form.engineSize}
+              onChange={handleChange}
+              className={inputClass("engineSize")}
+              placeholder="2.0L"
+            />
+            {errors.engineSize ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.engineSize}</p>
+            ) : null}
           </div>
-          <SelectField label="Fuel Type *" name="fuel" value={form.fuel} options={FUEL_OPTIONS} error={errors.fuel} onChange={handleChange} />
-          <SelectField label="Transmission *" name="transmission" value={form.transmission} options={TRANSMISSION_OPTIONS} error={errors.transmission} onChange={handleChange} />
-          <SelectField label="Drive Type *" name="driveType" value={form.driveType} options={DRIVE_TYPE_OPTIONS} error={errors.driveType} onChange={handleChange} />
+          <SelectField
+            label="Fuel Type *"
+            name="fuel"
+            value={form.fuel}
+            options={FUEL_OPTIONS}
+            error={errors.fuel}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Transmission *"
+            name="transmission"
+            value={form.transmission}
+            options={TRANSMISSION_OPTIONS}
+            error={errors.transmission}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Drive Type *"
+            name="driveType"
+            value={form.driveType}
+            options={DRIVE_TYPE_OPTIONS}
+            error={errors.driveType}
+            onChange={handleChange}
+          />
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Horsepower (Optional)</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Horsepower (Optional)
+            </label>
             <input
               type="number"
               min={1}
@@ -315,17 +464,47 @@ export default function VehicleFormWizard({
               onChange={handleChange}
               className={inputClass("horsepower")}
             />
-            {errors.horsepower ? <p className="mt-1.5 text-xs text-red-500">{errors.horsepower}</p> : null}
+            {errors.horsepower ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.horsepower}</p>
+            ) : null}
           </div>
         </div>
       ) : null}
 
       {currentStep === 2 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <SelectField label="Exterior Color (Optional)" name="exteriorColor" value={form.exteriorColor} options={EXTERIOR_COLOR_OPTIONS} error={errors.exteriorColor} onChange={handleChange} />
-          <SelectField label="Interior Color (Optional)" name="interiorColor" value={form.interiorColor} options={INTERIOR_COLOR_OPTIONS} error={errors.interiorColor} onChange={handleChange} />
-          <SelectField label="Doors (Optional)" name="doors" value={form.doors} options={DOOR_OPTIONS} error={errors.doors} onChange={handleChange} />
-          <SelectField label="Seats (Optional)" name="seats" value={form.seats} options={SEAT_OPTIONS} error={errors.seats} onChange={handleChange} />
+          <SelectField
+            label="Exterior Color (Optional)"
+            name="exteriorColor"
+            value={form.exteriorColor}
+            options={EXTERIOR_COLOR_OPTIONS}
+            error={errors.exteriorColor}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Interior Color (Optional)"
+            name="interiorColor"
+            value={form.interiorColor}
+            options={INTERIOR_COLOR_OPTIONS}
+            error={errors.interiorColor}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Doors (Optional)"
+            name="doors"
+            value={form.doors}
+            options={DOOR_OPTIONS}
+            error={errors.doors}
+            onChange={handleChange}
+          />
+          <SelectField
+            label="Seats (Optional)"
+            name="seats"
+            value={form.seats}
+            options={SEAT_OPTIONS}
+            error={errors.seats}
+            onChange={handleChange}
+          />
         </div>
       ) : null}
 
@@ -333,29 +512,78 @@ export default function VehicleFormWizard({
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Price <span className="text-red-500">*</span></label>
-              <input name="price" value={form.price} onChange={handleChange} className={inputClass("price")} />
-              {errors.price ? <p className="mt-1.5 text-xs text-red-500">{errors.price}</p> : null}
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+                Price <span className="text-red-500">*</span>
+              </label>
+              <input
+                name="price"
+                value={form.price}
+                onChange={handleChange}
+                className={inputClass("price")}
+              />
+              {errors.price ? (
+                <p className="mt-1.5 text-xs text-red-500">{errors.price}</p>
+              ) : null}
             </div>
-            <SelectField label="Badge (Optional)" name="badge" value={form.badge ?? ""} options={BADGE_OPTIONS} error={errors.badge} onChange={handleChange} />
+            <SelectField
+              label="Badge (Optional)"
+              name="badge"
+              value={form.badge ?? ""}
+              options={BADGE_OPTIONS}
+              error={errors.badge}
+              onChange={handleChange}
+            />
           </div>
           <label className="inline-flex items-center gap-2 text-sm text-gray-700">
-            <input type="checkbox" checked={form.negotiable} onChange={(event) => setForm((prev) => ({ ...prev, negotiable: event.target.checked }))} className="accent-primary" />
+            <input
+              type="checkbox"
+              checked={form.negotiable}
+              onChange={(event) =>
+                setForm((prev) => ({
+                  ...prev,
+                  negotiable: event.target.checked,
+                }))
+              }
+              className="accent-primary"
+            />
             Negotiable
           </label>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Description <span className="text-red-500">*</span></label>
-            <textarea name="description" value={form.description} onChange={handleChange} className={inputClass("description")} rows={4} />
-            {errors.description ? <p className="mt-1.5 text-xs text-red-500">{errors.description}</p> : null}
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Description <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              className={inputClass("description")}
+              rows={4}
+            />
+            {errors.description ? (
+              <p className="mt-1.5 text-xs text-red-500">
+                {errors.description}
+              </p>
+            ) : null}
           </div>
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Video (Optional)</label>
-            <input type="file" accept="video/*" onChange={handleVideoChange} className={inputClass("videoUrl")} />
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Video (Optional)
+            </label>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleVideoChange}
+              className={inputClass("videoUrl")}
+            />
             {selectedVideoName ? (
               <div className="mt-2 space-y-2">
                 <div className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-xs text-gray-600">
                   <span className="truncate">{selectedVideoName}</span>
-                  <button type="button" onClick={clearSelectedVideo} className="text-red-500 font-semibold">
+                  <button
+                    type="button"
+                    onClick={clearSelectedVideo}
+                    className="text-red-500 font-semibold"
+                  >
                     Remove
                   </button>
                 </div>
@@ -372,12 +600,22 @@ export default function VehicleFormWizard({
               </div>
             ) : null}
           </div>
-          <VehicleImageUploader label="Vehicle Images *" value={selectedImages} error={errors.image} onChange={handleImagesChange} />
+          <VehicleImageUploader
+            label="Vehicle Images *"
+            value={selectedImages}
+            error={errors.image}
+            onChange={handleImagesChange}
+          />
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">Features & Extras (Optional)</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
+              Features & Extras (Optional)
+            </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {FEATURE_OPTIONS.map((feature) => (
-                <label key={feature} className="inline-flex items-center gap-2 text-sm text-gray-700">
+                <label
+                  key={feature}
+                  className="inline-flex items-center gap-2 text-sm text-gray-700"
+                >
                   <input
                     type="checkbox"
                     checked={selectedFeatures.includes(feature)}

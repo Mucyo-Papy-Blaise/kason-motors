@@ -5,19 +5,12 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
-  Upload,
   List,
-Plus,
-  BarChart2,
+  Plus,
   Settings,
   LogOut,
   ChevronRight,
-  Eye,
-  Wrench,
-  Star,
   Bell,
-  HelpCircle,
-  Gauge,
   MessageSquare
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -190,14 +183,14 @@ export default function AdminSidebar({ fullName }: AdminSidebarProps) {
                   exit={{ opacity: 0, x: -8 }}
                   transition={{ duration: 0.2 }}
                 >
-                <Link href='/'>
-                <p className="font-bold text-sm tracking-tight leading-none text-gray-dark ">
-                    KASON <span className="text-primary">MOTORS</span>
-                  </p>
-                  <p className="text-[11px] mt-0.5 font-medium text-gray-mid">
-                    Admin Console
-                  </p>
-                </Link>
+                  <Link href="/">
+                    <p className="font-bold text-sm tracking-tight leading-none text-gray-dark ">
+                      KASON <span className="text-primary">MOTORS</span>
+                    </p>
+                    <p className="text-[11px] mt-0.5 font-medium text-gray-mid">
+                      Admin Console
+                    </p>
+                  </Link>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -224,7 +217,7 @@ export default function AdminSidebar({ fullName }: AdminSidebarProps) {
                 <div className="flex flex-col gap-0.5">
                   {group.items.map((item) => {
                     const Icon = item.icon;
-const isActive = pathname === item.href;
+                    const isActive = pathname === item.href;
 
                     return (
                       <Link
