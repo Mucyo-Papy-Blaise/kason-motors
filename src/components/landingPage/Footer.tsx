@@ -137,12 +137,17 @@ export default function Footer() {
               </li>
 
               <li>
-                <div className="flex items-start gap-3 text-white/40 text-sm">
-                  <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
+                <a
+                  href="https://maps.google.com/maps/place//data=!4m2!3m1!1s0x19dca7d0eecde367:0x8fd44212ce17858?entry=s&sa=X&ved=2ahUKEwiH4JnKjKOUAxVtU6QEHXKWCbEQ4kB6BAgSEAA&hl=en"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-3 text-white/40 text-sm hover:text-white transition-colors group"
+                >
+                  <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <MapPin size={12} className="text-primary" />
                   </span>
                   Kigali, KG 1511 St, CHINA EV MALL Special Economic Zone
-                </div>
+                </a>
               </li>
 
               <li>

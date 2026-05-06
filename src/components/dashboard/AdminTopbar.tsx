@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 import { Bell, Search, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
@@ -25,12 +25,15 @@ const getInitials = (fullName: string) =>
 export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
   const router = useRouter();
   const [unreadTotal, setUnreadTotal] = useState(0);
+  const [, startTransition] = useTransition();
 
   const fetchUnread = useCallback(async () => {
     const res = await fetch("/api/admin/notifications/unread");
     if (!res.ok) return;
     const data = (await res.json()) as { total?: number };
-    setUnreadTotal(typeof data.total === "number" ? data.total : 0);
+    startTransition(() => {
+      setUnreadTotal(typeof data.total === "number" ? data.total : 0);
+    });
   }, []);
 
   useEffect(() => {
@@ -97,7 +100,7 @@ export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
         >
           <Bell size={16} />
           {unreadTotal > 0 && (
-            <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-[9px] font-bold px-0.5">
+            <span className="absolute -top-0.5 -right-0.5 min-w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-[9px] font-bold px-0.5">
               {unreadTotal > 99 ? "99+" : unreadTotal}
             </span>
           )}
