@@ -9,7 +9,7 @@ export const BRAND_OPTIONS = [
   "Hyundai",
   "Kia",
   "Ford",
-  "BDY",
+  "BYD",
   "Dongfeng"
 ] as const;
 
