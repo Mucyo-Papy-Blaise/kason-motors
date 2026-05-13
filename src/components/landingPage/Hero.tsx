@@ -8,7 +8,6 @@ import {
   writeVehicleListCache,
 } from "@/lib/vehiclesListCache";
 
-
 type HeroSlide = {
   id: number;
   title: string;
@@ -66,38 +65,30 @@ const fallbackSlides: HeroSlide[] = [
 ];
 
 function buildSlidesFromVehicles(data: Vehicle[]): HeroSlide[] {
-  const byBrand = new Map<string, Vehicle>();
-  const sorted = [...data].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
+  const sorted = [...data].sort(
+    (a, b) => Number(b.id || 0) - Number(a.id || 0),
+  );
 
-  sorted.forEach((car) => {
-    const brandKey = (car?.brand || "").trim();
-    if (!brandKey) return;
-    if (!byBrand.has(brandKey)) {
-      byBrand.set(brandKey, car);
-    }
+  return sorted.slice(0, 4).map((car) => {
+    const name =
+      car.title ||
+      `${car?.brand || ""} ${car?.model || ""} ${car?.year || ""}`.trim() ||
+      "Featured Vehicle";
+
+    const details = [car?.year, car?.body_type, car?.fuel]
+      .filter(Boolean)
+      .join(" · ");
+
+    return {
+      id: car.id,
+      title: "NEW ARRIVAL", // consistent hero label
+      car: name.toUpperCase(),
+      price: `${Number(car?.price || 0).toLocaleString()} RWF`,
+      period: "",
+      description: details || "Recently added vehicle.",
+      image: car?.image_urls?.[0] || car?.image || fallbackSlides[0].image,
+    };
   });
-
-  return Array.from(byBrand.values())
-    .slice(0, 8)
-    .map((car) => {
-      const brand = car?.brand?.toUpperCase() || "FEATURED";
-      const name =
-        car.title ||
-        `${car?.brand || ""} ${car?.model || ""} ${car?.year || ""}`.trim() ||
-        "Featured Vehicle";
-      const details = [car?.year, car?.body_type, car.fuel]
-        .filter(Boolean)
-        .join(" · ");
-      return {
-        id: car.id,
-        title: `${brand} COLLECTION`,
-        car: name.toUpperCase(),
-        price: `${Number(car?.price || 0).toLocaleString()} RWF`,
-        period: "",
-        description: details || "Explore premium vehicles now available.",
-        image: car?.image_urls?.[0] || car?.image || fallbackSlides[0].image,
-      };
-    });
 }
 
 export default function Hero() {
@@ -182,10 +173,7 @@ export default function Hero() {
           </div>
           <div className="mt-8 flex gap-2 md:mt-10">
             {[0, 1, 2].map((dot) => (
-              <div
-                key={dot}
-                className="h-1 w-6 rounded-full bg-white/25"
-              />
+              <div key={dot} className="h-1 w-6 rounded-full bg-white/25" />
             ))}
           </div>
         </div>
@@ -215,7 +203,7 @@ export default function Hero() {
               priority={index === 0}
               unoptimized
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-r from-black/75 via-black/40 to-transparent" />
           </motion.div>
         ))}
       </motion.div>
@@ -233,13 +221,11 @@ export default function Hero() {
           <p className="mb-3 text-sm font-semibold uppercase tracking-[0.3em] text-primary-light">
             {slide?.title}
           </p>
-          <h1 className="mb-4 text-5xl leading-none font-bold tracking-tight text-white md:text-7xl lg:text-8xl">
+          <h1 className="mb-4 text-3xl leading-none font-bold tracking-tight text-white md:text-3xl lg:text-5xl truncate">
             {slide?.car}
           </h1>
           <div className="mb-3 flex items-baseline gap-2">
-            <span
-              className="text-4xl font-bold text-primary-light"
-            >
+            <span className="text-4xl font-bold text-primary-light">
               {slide?.price}
             </span>
             <span className="text-lg text-white/70">{slide?.period}</span>
