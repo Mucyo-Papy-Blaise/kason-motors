@@ -85,7 +85,7 @@ export default function Navbar({ user }: NavbarProps) {
           scrolled ? "hidden" : "block"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 flex items-center gap-3 sm:gap-5 text-xs text-font/60">
+        <div className="max-w-7xl mx-auto  py-2 flex items-center gap-3 sm:gap-5 text-xs text-font/60">
           <span className="flex items-center gap-1.5">
             <MapPin size={12} />
             <span className="hidden sm:inline">KG 1511 St</span>
@@ -108,7 +108,7 @@ export default function Navbar({ user }: NavbarProps) {
             : "relative bg-gray-dark"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto py-3 sm:py-4 flex items-center justify-between gap-3">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <Image
