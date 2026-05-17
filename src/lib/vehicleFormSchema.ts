@@ -30,6 +30,13 @@ export const vehicleFormSchema = z.object({
     .refine((value) => !value || (!Number.isNaN(Number(value)) && Number(value) > 0), {
       message: "Horsepower must be a valid number",
     }),
+  // Range in km — optional, useful for EVs or any car spec
+  range: z
+    .string()
+    .optional()
+    .refine((value) => !value || (!Number.isNaN(Number(value)) && Number(value) > 0), {
+      message: "Range must be a valid number greater than 0",
+    }),
   exteriorColor: z.string().optional(),
   interiorColor: z.string().optional(),
   doors: z

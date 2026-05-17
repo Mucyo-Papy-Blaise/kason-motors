@@ -37,6 +37,7 @@ export type InventoryCar = {
   name?: string;
   type?: string;
   category?: string;
+  range?: number | string | null; 
 };
 
 export type InventoryFilters = {

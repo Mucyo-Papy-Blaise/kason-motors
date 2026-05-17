@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Quicksand, JetBrains_Mono } from "next/font/google";
+import WhatsAppButton from "@/components/WhatsAppButton/WhatsAppButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
         className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
       >
         {children}
+        <WhatsAppButton />
       </body>
     </html>
   );
