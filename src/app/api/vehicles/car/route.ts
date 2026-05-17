@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       transmission: payloadData.transmission,
       drive_type: payloadData.driveType,
       horsepower: payloadData.horsepower ? Number(payloadData.horsepower) : null,
+      range: payloadData.range ? Number(payloadData.range) : null, // ← added
       exterior_color: payloadData.exteriorColor || null,
       interior_color: payloadData.interiorColor || null,
       doors: payloadData.doors ? Number(payloadData.doors) : null,

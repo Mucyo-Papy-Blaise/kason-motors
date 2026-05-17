@@ -15,106 +15,133 @@ const ZapIcon = () => (
   </svg>
 );
 
+// Color per condition value
+
+
 export const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const imageUrl = car.image_urls?.[0] || car.image || "";
   const title = car.title || `${car.brand} ${car.model}`.trim() || car.name;
   const bodyType = car.body_type || car.type || "-";
   const price = Number(car.price || 0);
 
+  // Only show the badge if it has a meaningful value (not empty, not "Featured" by default)
+  const DEFAULT_BADGES = ["featured", ""];
+  const showBadge =
+    car.badge && !DEFAULT_BADGES.includes(car.badge.toLowerCase().trim());
+
+
+
   return (
     <Link href={`/inventory/${car.id}`} className="block h-full">
-    <article
-      className="
-      group relative flex h-full flex-col overflow-hidden bg-gray-dark
-      border border-line/25
-      transition-all duration-300 ease-out
-      hover:shadow-lg hover:shadow-black/30
-      hover:-translate-y-1
-      hover:border-primary/40
-    "
-    >
-      <div className="relative h-44 shrink-0 overflow-hidden bg-ink">
-        {car.badge ? (
-          <div className="absolute top-3 left-3 z-10">
-            <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-font">
-              {car.badge}
+      <article
+        className="
+        group relative flex h-full flex-col overflow-hidden bg-gray-dark
+        border border-line/25
+        transition-all duration-300 ease-out
+        hover:shadow-lg hover:shadow-black/30
+        hover:-translate-y-1
+        hover:border-primary/40
+      "
+      >
+        <div className="relative h-44 shrink-0 overflow-hidden bg-ink">
+          {/* Left badge — e.g. "New Arrival", "Hot Deal" — only real badges */}
+          {showBadge ? (
+            <div className="absolute top-3 left-3 z-10">
+              <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-font">
+                {car.badge}
+              </div>
             </div>
+          ) : null}
+
+          {/* Right badge — condition: New, Used, Foreign Used, etc. */}
+          {car.condition ? (
+            <div className="absolute top-3 right-3 z-10">
+              <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-font">
+                {car.condition}
+              </div>
+            </div>
+          ) : null}
+
+          <div className="w-full h-full relative transition-transform duration-500 group-hover:scale-105">
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt={title ?? ""}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                unoptimized
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-font/80">
+                No image
+              </div>
+            )}
           </div>
-        ) : null}
-        <div className="w-full h-full relative transition-transform duration-500 group-hover:scale-105">
-          {imageUrl ? (
-            <Image
-              src={imageUrl}
-              alt={title ?? ''}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 33vw"
-              unoptimized
-            />
-          ) : (
-            <div className="flex h-full items-center justify-center text-sm text-font/80">
-              No image
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col p-4">
-        <div className="shrink-0">
-          <p className="mb-0.5 text-[11px] font-semibold tracking-widest uppercase text-primary">
-            {bodyType}
-          </p>
-          <h3 className="line-clamp-2 min-h-[2.75rem] text-base font-bold leading-snug text-font">
-            {title}
-          </h3>
         </div>
 
-        <div className="mt-3 flex min-h-0 flex-1 flex-col space-y-1.5">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-font/85">
-            Specs
-          </p>
-          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-font/90">
-            <span className="flex items-center gap-1">{car.year || "-"}</span>
-            <span className="flex items-center gap-1">{car.fuel || "-"}</span>
-            <span className="flex items-center gap-1">{car.transmission || "-"}</span>
-            <span className="flex items-center gap-1">
-              {(Number(car.mileage || 0)).toLocaleString()} km
-            </span>
-            {car.drive_type ? (
-              <span className="flex items-center gap-1 text-primary">
-                <ZapIcon />
-                {car.drive_type}
+        <div className="flex min-h-0 flex-1 flex-col p-4">
+          <div className="shrink-0">
+            <p className="mb-0.5 text-[11px] font-semibold tracking-widest uppercase text-primary">
+              {bodyType}
+            </p>
+            <h3 className="line-clamp-2 min-h-[2.75rem] text-base font-bold leading-snug text-font">
+              {title}
+            </h3>
+          </div>
+
+          <div className="mt-3 flex min-h-0 flex-1 flex-col space-y-1.5">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-font/85">
+              Specs
+            </p>
+            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-font/90">
+              <span className="flex items-center gap-1">{car.year || "-"}</span>
+              <span className="flex items-center gap-1">{car.fuel || "-"}</span>
+              <span className="flex items-center gap-1">{car.transmission || "-"}</span>
+              <span className="flex items-center gap-1">
+                {Number(car.mileage || 0).toLocaleString()} km
               </span>
-            ) : null}
+              {car.drive_type ? (
+                <span className="flex items-center gap-1 text-primary">
+                  <ZapIcon />
+                  {car.drive_type}
+                </span>
+              ) : null}
+              {car.range ? (
+                <span className="flex items-center gap-1 text-primary">
+                  <ZapIcon />
+                  {Number(car.range).toLocaleString()} km range
+                </span>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        <div className="mt-auto flex shrink-0 items-center justify-between gap-2 border-t border-line/20 pt-3">
-          <div className="flex min-w-0 flex-col">
-            <span className="text-xl font-black text-font">
-              {price.toLocaleString()} RWF
-            </span>
-            <span className="ml-1 text-[11px] text-font/85">
-              {car.negotiable ? "(Negotiable)" : ""}
+          <div className="mt-auto flex shrink-0 items-center justify-between gap-2 border-t border-line/20 pt-3">
+            <div className="flex min-w-0 flex-col">
+              <span className="text-xl font-black text-font">
+                {price.toLocaleString()} RWF
+              </span>
+              <span className="ml-1 text-[11px] text-font/85">
+                {car.negotiable ? "(Negotiable)" : ""}
+              </span>
+            </div>
+            <span
+              className="
+              bg-primary text-font
+              text-[12px] font-bold tracking-wide
+              transition-all duration-200
+              hover:bg-primary-dark
+              hover:shadow-lg
+              p-2
+              rounded
+              active:scale-95
+            "
+            >
+              View details
             </span>
           </div>
-          <span
-            className="
-            bg-primary text-font
-            text-[12px] font-bold tracking-wide
-            transition-all duration-200
-            hover:bg-primary-dark
-            hover:shadow-lg
-            p-2
-            rounded
-            active:scale-95
-          "
-          >
-            View details
-          </span>
         </div>
-      </div>
-    </article>
+      </article>
     </Link>
   );
 };

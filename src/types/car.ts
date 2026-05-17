@@ -8,6 +8,7 @@ export type Car = {
   driveType: string;
   engineSize: string;
   horsepower: string | number;
+  range: string | number; // km range the car can travel (e.g. for EVs or any car)
   exteriorColor: string;
   interiorColor: string;
   doors: string | number;
@@ -39,6 +40,7 @@ export const EMPTY_FORM = {
   driveType: "",
   engineSize: "",
   horsepower: "",
+  range: "", // km range
   exteriorColor: "",
   interiorColor: "",
   doors: "",
@@ -100,4 +102,3 @@ export interface FilterState {
   capacity: '2-5' | '6+' | 'all';
   maxDailyPrice: number;
 }
- 

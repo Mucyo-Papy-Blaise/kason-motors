@@ -468,6 +468,26 @@ export default function VehicleFormWizard({
               <p className="mt-1.5 text-xs text-red-500">{errors.horsepower}</p>
             ) : null}
           </div>
+          {/* ── Range field ── */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Range (km) (Optional)
+            </label>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              name="range"
+              value={form.range ?? ""}
+              onChange={handleChange}
+              placeholder="e.g. 500"
+              className={inputClass("range")}
+            />
+            {errors.range ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.range}</p>
+            ) : null}
+          </div>
         </div>
       ) : null}
 
