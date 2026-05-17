@@ -4,7 +4,7 @@ import RegisterPage from "@/components/auth/Register";
 export default function Page() {
   return (
     <Suspense>
-      <RegisterPage />
+      {/* <RegisterPage /> */}
     </Suspense>
   );
 }

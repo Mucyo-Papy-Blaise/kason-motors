@@ -65,9 +65,11 @@ const fallbackSlides: HeroSlide[] = [
 ];
 
 function buildSlidesFromVehicles(data: Vehicle[]): HeroSlide[] {
-  const sorted = [...data].sort(
-    (a, b) => Number(b.id || 0) - Number(a.id || 0),
-  );
+  const sorted = [...data].sort((a, b) => {
+    const priceA = Number(String(a.price || 0).replace(/,/g, ""));
+    const priceB = Number(String(b.price || 0).replace(/,/g, ""));
+    return priceB - priceA; // highest to lowest
+  });
 
   return sorted.slice(0, 4).map((car) => {
     const name =
@@ -81,9 +83,9 @@ function buildSlidesFromVehicles(data: Vehicle[]): HeroSlide[] {
 
     return {
       id: car.id,
-      title: "NEW ARRIVAL", // consistent hero label
+      title: "Order from highest price to the lowest price",
       car: name.toUpperCase(),
-      price: `${Number(car?.price || 0).toLocaleString()} RWF`,
+      price: `${Number(String(car?.price || 0).replace(/,/g, "")).toLocaleString()} RWF`,
       period: "",
       description: details || "Recently added vehicle.",
       image: car?.image_urls?.[0] || car?.image || fallbackSlides[0].image,

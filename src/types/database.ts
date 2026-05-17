@@ -14,32 +14,45 @@ export type Database = {
   public: {
     Tables: {
       profiles: {
-        Row: {
-          created_at: string;
-          email: string;
-          full_name: string;
-          id: string;
-          role: UserRole;
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          email: string;
-          full_name: string;
-          id: string;
-          role?: UserRole;
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          email?: string;
-          full_name?: string;
-          id?: string;
-          role?: UserRole;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
+  Row: {
+    created_at: string;
+    email: string;
+    full_name: string;
+    id: string;
+    role: UserRole;
+     password?: string | null; 
+    updated_at: string;
+
+    reset_token?: string | null;
+    reset_token_expiry?: string | null;
+  };
+
+  Insert: {
+    created_at?: string;
+    email: string;
+    full_name: string;
+    id: string;
+    role?: UserRole;
+    updated_at?: string;
+ password?: string | null; 
+    reset_token?: string | null;
+    reset_token_expiry?: string | null;
+  };
+
+  Update: {
+    created_at?: string;
+    email?: string;
+    full_name?: string;
+    id?: string;
+    role?: UserRole;
+    updated_at?: string;
+ password?: string | null; 
+    reset_token?: string | null;
+    reset_token_expiry?: string | null;
+  };
+
+  Relationships: [];
+};
 
       cars: {
         Row: {
