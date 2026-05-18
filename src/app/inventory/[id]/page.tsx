@@ -33,6 +33,7 @@ type CarDetails = {
   doors?: number | null;
   seats?: number | null;
   negotiable?: boolean;
+  full_option?: boolean; // ← NEW: true means the car has all features/options
   description?: string;
   image_urls?: string[];
   video_url?: string | null;
@@ -94,6 +95,7 @@ export default function CarDetailPage() {
         `Hi Kason Motors, I'm interested in this vehicle: ${carTitle} (Listing #${car.id}).`,
       )
     : "#";
+
   const imageUrls = useMemo(() => {
     if (!car) return [];
     if (Array.isArray(car.image_urls) && car.image_urls.length > 0)
@@ -162,7 +164,8 @@ export default function CarDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="lg:col-span-3 space-y-6">
             <div>
-              <div className="flex items-center gap-3 mb-2">
+              {/* Badges row: badge, condition, negotiable, and Full Option ── NEW */}
+              <div className="flex flex-wrap items-center gap-3 mb-2">
                 {car.badge ? (
                   <span className="inline-block bg-accent text-primary-dark text-xs font-bold uppercase tracking-widest px-3 py-1 rounded">
                     {car.badge}
@@ -176,6 +179,16 @@ export default function CarDetailPage() {
                 {car.negotiable ? (
                   <span className="text-xs text-primary-dark bg-primary/10 rounded px-3 py-1">
                     Negotiable
+                  </span>
+                ) : null}
+                {/* Full Option badge ── NEW */}
+                {car.full_option ? (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 bg-amber-400 rounded px-3 py-1">
+                    {/* Star icon */}
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                    Full Option
                   </span>
                 ) : null}
               </div>
@@ -254,6 +267,29 @@ export default function CarDetailPage() {
                   </div>
                 </div>
               ))}
+
+              {/* Full Option spec card ── NEW */}
+              {car.full_option ? (
+                <div className="bg-amber-400/10 border border-amber-400/40 px-4 py-3 flex items-center gap-3">
+                  <div className="w-9 h-9 rounded bg-amber-400/20 flex items-center justify-center flex-shrink-0">
+                    <svg
+                      className="w-4 h-4 text-amber-500"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-mid leading-none mb-0.5">
+                      Package
+                    </p>
+                    <p className="text-sm font-bold text-amber-500">
+                      Full Option
+                    </p>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
 
@@ -276,6 +312,17 @@ export default function CarDetailPage() {
                     {formatPrice(Number(car.price || 0))}
                   </span>
                 </div>
+                {/* Full Option notice in price panel ── NEW */}
+                {car.full_option ? (
+                  <div className="mt-2 flex items-center gap-2 rounded-lg bg-amber-400/10 border border-amber-400/30 px-3 py-2">
+                    <svg className="w-4 h-4 text-amber-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                    <span className="text-xs font-bold text-amber-500">
+                      This car is Full Option — all features included
+                    </span>
+                  </div>
+                ) : null}
                 <div className="mt-4 space-y-3">
                   <a
                     href={whatsappHref}

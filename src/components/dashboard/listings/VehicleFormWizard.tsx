@@ -102,6 +102,7 @@ export default function VehicleFormWizard({
     ...EMPTY_FORM,
     ...initialData,
     negotiable: initialData?.negotiable ?? false,
+    fullOption: initialData?.fullOption ?? false, // ← NEW
     features: initialData?.features ?? [],
     imageUrls: initialData?.imageUrls ?? [],
   } as VehicleFormData);
@@ -324,6 +325,7 @@ export default function VehicleFormWizard({
         <span className="text-red-500 font-semibold">*</span> Required fields
       </p>
 
+      {/* ── STEP 0: Basic ── */}
       {currentStep === 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="sm:col-span-2">
@@ -395,6 +397,7 @@ export default function VehicleFormWizard({
         </div>
       ) : null}
 
+      {/* ── STEP 1: Technical ── */}
       {currentStep === 1 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
@@ -468,7 +471,6 @@ export default function VehicleFormWizard({
               <p className="mt-1.5 text-xs text-red-500">{errors.horsepower}</p>
             ) : null}
           </div>
-          {/* ── Range field ── */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
               Range (km) (Optional)
@@ -491,6 +493,7 @@ export default function VehicleFormWizard({
         </div>
       ) : null}
 
+      {/* ── STEP 2: Appearance ── */}
       {currentStep === 2 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <SelectField
@@ -528,6 +531,7 @@ export default function VehicleFormWizard({
         </div>
       ) : null}
 
+      {/* ── STEP 3: Pricing & Media ── */}
       {currentStep === 3 ? (
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -554,6 +558,8 @@ export default function VehicleFormWizard({
               onChange={handleChange}
             />
           </div>
+
+          {/* ── Negotiable checkbox ── */}
           <label className="inline-flex items-center gap-2 text-sm text-gray-700">
             <input
               type="checkbox"
@@ -568,6 +574,34 @@ export default function VehicleFormWizard({
             />
             Negotiable
           </label>
+
+          {/* ── Full Option toggle switch ── NEW ── */}
+          <div className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 shadow-sm">
+            <div>
+              <p className="text-sm font-semibold text-gray-700">Full Option</p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Turn ON if this car comes with all features &amp; extras
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={form.fullOption ?? false}
+              onClick={() =>
+                setForm((prev) => ({ ...prev, fullOption: !prev.fullOption }))
+              }
+              className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+                form.fullOption ? "bg-primary" : "bg-gray-300"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-200 ease-in-out ${
+                  form.fullOption ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+          </div>
+
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
               Description <span className="text-red-500">*</span>
@@ -628,7 +662,7 @@ export default function VehicleFormWizard({
           />
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-2">
-              Features & Extras (Optional)
+              Features &amp; Extras (Optional)
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {FEATURE_OPTIONS.map((feature) => (

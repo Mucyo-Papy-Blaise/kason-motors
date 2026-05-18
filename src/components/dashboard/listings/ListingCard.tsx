@@ -123,14 +123,14 @@ export default function VehicleList() {
     }
   };
 
-
   const filteredCars = cars.filter((car) =>
     `${car.name} ${car.category} ${car.type} ${car.fuel} ${car.badge}`
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
-  const primaryImageFor = (car: Car) => normalizeCarImages(car.image, car.image_urls ?? car.imageUrls)[0];
+  const primaryImageFor = (car: Car) =>
+    normalizeCarImages(car.image, car.image_urls ?? car.imageUrls)[0];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-primary/5 to-gray-100 py-10 px-4">
@@ -140,14 +140,28 @@ export default function VehicleList() {
         <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Vehicle Inventory</h1>
-              <p className="text-sm text-gray-500">{cars.length} vehicle{cars.length !== 1 ? "s" : ""} listed</p>
+              <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+                Vehicle Inventory
+              </h1>
+              <p className="text-sm text-gray-500">
+                {cars.length} vehicle{cars.length !== 1 ? "s" : ""} listed
+              </p>
             </div>
           </div>
 
           <div className="relative w-full sm:w-72">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+              />
             </svg>
             <input
               placeholder="Search vehicles..."
@@ -164,14 +178,28 @@ export default function VehicleList() {
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-24 text-gray-400">
               <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-3" />
-              <p className="text-sm font-medium text-gray-500">Loading vehicles...</p>
+              <p className="text-sm font-medium text-gray-500">
+                Loading vehicles...
+              </p>
             </div>
           ) : filteredCars.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 text-gray-400">
-              <svg className="w-14 h-14 mb-4 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
+              <svg
+                className="w-14 h-14 mb-4 text-gray-200"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"
+                />
               </svg>
-              <p className="text-lg font-semibold text-gray-300">No vehicles found</p>
+              <p className="text-lg font-semibold text-gray-300">
+                No vehicles found
+              </p>
               <p className="text-sm mt-1">Upload a vehicle to see it here</p>
             </div>
           ) : (
@@ -179,16 +207,40 @@ export default function VehicleList() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
-                    <th className="text-left px-5 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Vehicle</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Category</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Type</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Price</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Year</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Mileage</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Fuel</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Transmission</th>
-                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Badge</th>
-                    <th className="text-center px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
+                    <th className="text-left px-5 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Vehicle
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Category
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Type
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Price
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Year
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Mileage
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Fuel
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Transmission
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Badge
+                    </th>
+                    {/* Full Option column ── NEW */}
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Full Option
+                    </th>
+                    <th className="text-center px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
@@ -196,7 +248,10 @@ export default function VehicleList() {
                     const previewImage = primaryImageFor(car);
 
                     return (
-                      <tr key={car.id} className="hover:bg-primary/5 transition-colors duration-150 group">
+                      <tr
+                        key={car.id}
+                        className="hover:bg-primary/5 transition-colors duration-150 group"
+                      >
                         <td className="px-5 py-3.5">
                           <div className="flex items-center gap-3">
                             <div className="relative w-14 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-100 shadow-sm">
@@ -210,34 +265,76 @@ export default function VehicleList() {
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <svg className="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14" />
+                                  <svg
+                                    className="w-5 h-5 text-gray-300"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={1.5}
+                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"
+                                    />
                                   </svg>
                                 </div>
                               )}
                             </div>
-                            <span className="font-semibold text-gray-800 whitespace-nowrap">{car.name || "-"}</span>
+                            <span className="font-semibold text-gray-800 whitespace-nowrap">
+                              {car.name || "-"}
+                            </span>
                           </div>
                         </td>
-                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">{car.category || "-"}</td>
-                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">{car.type || "-"}</td>
-                        <td className="px-4 py-3.5 font-semibold text-primary whitespace-nowrap">
-                          {car.price ? `RWF ${Number(car.price).toLocaleString()}` : "-"}
-                        </td>
-                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">{car.year || "-"}</td>
                         <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
-                          {car.mileage ? `${Number(car.mileage).toLocaleString()} km` : "-"}
+                          {car.category || "-"}
                         </td>
-                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">{car.fuel || "-"}</td>
-                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">{car.transmission || "-"}</td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          {car.type || "-"}
+                        </td>
+                        <td className="px-4 py-3.5 font-semibold text-primary whitespace-nowrap">
+                          {car.price
+                            ? `RWF ${Number(car.price).toLocaleString()}`
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          {car.year || "-"}
+                        </td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          {car.mileage
+                            ? `${Number(car.mileage).toLocaleString()} km`
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          {car.fuel || "-"}
+                        </td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          {car.transmission || "-"}
+                        </td>
                         <td className="px-4 py-3.5 whitespace-nowrap">
                           {car.badge ? (
                             <span
                               className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                                car.badge === "Featured" ? "bg-amber-100 text-amber-700" : "bg-primary/10 text-primary"
+                                car.badge === "Featured"
+                                  ? "bg-amber-100 text-amber-700"
+                                  : "bg-primary/10 text-primary"
                               }`}
                             >
                               {car.badge}
+                            </span>
+                          ) : (
+                            <span className="text-gray-300 text-xs">-</span>
+                          )}
+                        </td>
+                        {/* Full Option cell ── NEW */}
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          {car.fullOption ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                              {/* Star icon */}
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                              </svg>
+                              Yes
                             </span>
                           ) : (
                             <span className="text-gray-300 text-xs">-</span>
@@ -250,8 +347,18 @@ export default function VehicleList() {
                               className="w-8 h-8 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors duration-150"
                               title="Edit"
                             >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z" />
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15.232 5.232l3.536 3.536M9 11l6-6 3 3-6 6H9v-3z"
+                                />
                               </svg>
                             </Link>
                             <button
@@ -259,8 +366,18 @@ export default function VehicleList() {
                               className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 text-red-400 hover:text-red-600 flex items-center justify-center transition-colors duration-150"
                               title="Delete"
                             >
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              <svg
+                                className="w-3.5 h-3.5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
                               </svg>
                             </button>
                           </div>
@@ -286,17 +403,38 @@ export default function VehicleList() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div className="p-6 text-center">
               <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <svg
+                  className="w-7 h-7 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold text-gray-900 mb-1">Delete Vehicle?</h2>
-              <p className="text-sm text-gray-500 mb-6">This action cannot be undone. The vehicle will be permanently removed.</p>
+              <h2 className="text-lg font-bold text-gray-900 mb-1">
+                Delete Vehicle?
+              </h2>
+              <p className="text-sm text-gray-500 mb-6">
+                This action cannot be undone. The vehicle will be permanently
+                removed.
+              </p>
               <div className="flex gap-3">
-                <button onClick={() => setDeleteId(null)} className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                <button
+                  onClick={() => setDeleteId(null)}
+                  className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+                >
                   Cancel
                 </button>
-                <button onClick={() => handleDelete(deleteId)} className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-red-100">
+                <button
+                  onClick={() => handleDelete(deleteId)}
+                  className="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-red-100"
+                >
                   Delete
                 </button>
               </div>
@@ -304,8 +442,6 @@ export default function VehicleList() {
           </div>
         </div>
       )}
-
-      {/* Edit is now handled in dedicated page: /admin/listings/[id]/edit */}
     </div>
   );
 }

@@ -48,6 +48,7 @@ export async function PUT(
       seats: payloadData.seats ? Number(payloadData.seats) : null,
       price: Number(payloadData.price),
       negotiable: payloadData.negotiable,
+      full_option: payloadData.fullOption,
       description: payloadData.description,
       image: payloadData.image,
       image_urls: payloadData.imageUrls,

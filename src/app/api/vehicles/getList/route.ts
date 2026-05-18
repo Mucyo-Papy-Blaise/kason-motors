@@ -14,9 +14,14 @@ export async function GET() {
       );
     }
 
+    const normalizedCars = (data ?? []).map((car) => ({
+      ...car,
+      fullOption: Boolean(car.full_option),
+    }));
+
     return NextResponse.json({
       success: true,
-      data,
+      data: normalizedCars,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";

@@ -8,12 +8,14 @@ export type Car = {
   driveType: string;
   engineSize: string;
   horsepower: string | number;
-  range: string | number; // km range the car can travel (e.g. for EVs or any car)
+  range: string | number;
   exteriorColor: string;
   interiorColor: string;
   doors: string | number;
   seats: string | number;
   negotiable: boolean;
+  fullOption: boolean; // ← NEW: whether the car has all options/features
+  full_option?: boolean;
   description: string;
   videoUrl: string;
   features: string[];
@@ -40,12 +42,13 @@ export const EMPTY_FORM = {
   driveType: "",
   engineSize: "",
   horsepower: "",
-  range: "", // km range
+  range: "",
   exteriorColor: "",
   interiorColor: "",
   doors: "",
   seats: "",
   negotiable: false,
+  fullOption: false, // ← NEW: default is OFF
   description: "",
   videoUrl: "",
   features: [] as string[],
@@ -83,7 +86,7 @@ export function normalizeCarImages(
 }
 
 export type CarType = 'Mini' | 'Standard' | 'Compact' | 'Economy' | 'Van' | 'Pickup' | 'Other';
- 
+
 export interface CarMock {
   id: string;
   name: string;
@@ -96,7 +99,7 @@ export interface CarMock {
   isSpecialDeal?: boolean;
   imageUrl: string;
 }
- 
+
 export interface FilterState {
   carTypes: CarType[];
   capacity: '2-5' | '6+' | 'all';
