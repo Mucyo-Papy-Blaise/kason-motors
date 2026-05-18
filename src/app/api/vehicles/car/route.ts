@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
       seats: payloadData.seats ? Number(payloadData.seats) : null,
       price: Number(payloadData.price),
       negotiable: payloadData.negotiable,
+      full_option: payloadData.fullOption,
       description: payloadData.description,
       image: payloadData.image,
       image_urls: payloadData.imageUrls,
@@ -64,7 +65,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data,
+      data: {
+        ...data,
+        fullOption: Boolean(data.full_option),
+      },
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";

@@ -30,7 +30,6 @@ export const vehicleFormSchema = z.object({
     .refine((value) => !value || (!Number.isNaN(Number(value)) && Number(value) > 0), {
       message: "Horsepower must be a valid number",
     }),
-  // Range in km — optional, useful for EVs or any car spec
   range: z
     .string()
     .optional()
@@ -58,6 +57,7 @@ export const vehicleFormSchema = z.object({
       message: "Price must be a valid number greater than 0",
     }),
   negotiable: z.boolean(),
+  fullOption: z.boolean().default(false),
   description: z.string().min(10, "Description must be at least 10 characters"),
   image: z.string().min(1, "Please upload at least one vehicle image"),
   imageUrls: z.array(z.string()).min(1, "Please upload at least one vehicle image"),

@@ -33,11 +33,12 @@ export type InventoryCar = {
   image?: string;
   image_urls?: string[];
   negotiable?: boolean;
+  full_option?: boolean; // ← NEW: true means car has all features/options
   badge?: string;
   name?: string;
   type?: string;
   category?: string;
-  range?: number | string | null; 
+  range?: number | string | null;
 };
 
 export type InventoryFilters = {
@@ -109,7 +110,6 @@ export const CarListingPage: React.FC = () => {
   useEffect(() => {
     setFilters((prev) => ({
       ...prev,
-      // Ensure initial slider range does not lock out high-priced vehicles.
       maxPrice:
         prev.maxPrice > maxPriceFromData || prev.maxPrice === 0 || (cars.length > 0 && prev.maxPrice === 1000)
           ? maxPriceFromData
@@ -383,7 +383,6 @@ export const CarListingPage: React.FC = () => {
           </>
         ) : null}
       </AnimatePresence>
-      
     </main>
   );
 };

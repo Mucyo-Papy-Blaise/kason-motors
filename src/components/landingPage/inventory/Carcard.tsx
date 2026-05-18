@@ -15,8 +15,11 @@ const ZapIcon = () => (
   </svg>
 );
 
-// Color per condition value
-
+const StarIcon = () => (
+  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
 
 export const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const imageUrl = car.image_urls?.[0] || car.image || "";
@@ -24,12 +27,11 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const bodyType = car.body_type || car.type || "-";
   const price = Number(car.price || 0);
 
-  // Only show the badge if it has a meaningful value (not empty, not "Featured" by default)
   const DEFAULT_BADGES = ["", ""];
   const showBadge =
     car.badge && !DEFAULT_BADGES.includes(car.badge.toLowerCase().trim());
 
-
+  const showFullOption = car.full_option === true;
 
   return (
     <Link href={`/inventory/${car.id}`} className="block h-full">
@@ -44,7 +46,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
       "
       >
         <div className="relative h-44 shrink-0 overflow-hidden bg-ink">
-          {/* Left badge — e.g. "New Arrival", "Hot Deal" — only real badges */}
+          {/* Left badge — e.g. "New Arrival", "Hot Deal" */}
           {showBadge ? (
             <div className="absolute top-3 left-3 z-10">
               <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-font">
@@ -85,9 +87,21 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
             <p className="mb-0.5 text-[11px] font-semibold tracking-widest uppercase text-primary">
               {bodyType}
             </p>
-            <h3 className="line-clamp-2 min-h-[2.75rem] text-base font-bold leading-snug text-font">
-              {title}
-            </h3>
+
+            {/* Car title row with Full Option badge on the right */}
+            <div className="flex items-start justify-between gap-2 min-h-[2.75rem]">
+              <h3 className="line-clamp-2 text-base font-bold leading-snug text-font">
+                {title}
+              </h3>
+
+              {/* Full Option — right side, white text */}
+              {showFullOption ? (
+                <span className="flex shrink-0 items-center gap-1 text-[11px] font-bold text-white whitespace-nowrap mt-0.5">
+                 
+                  Full Option
+                </span>
+              ) : null}
+            </div>
           </div>
 
           <div className="mt-3 flex min-h-0 flex-1 flex-col space-y-1.5">

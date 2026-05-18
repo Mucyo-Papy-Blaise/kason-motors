@@ -30,7 +30,13 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json({
+      success: true,
+      data: {
+        ...data,
+        fullOption: Boolean(data.full_option),
+      },
+    });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json(
