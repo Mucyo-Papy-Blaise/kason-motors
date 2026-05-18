@@ -1,5 +1,7 @@
 "use client";
 
+
+import Link from "next/link";
 import React from "react";
 
 interface PillarProps {
@@ -92,12 +94,12 @@ export const AboutCta: React.FC = () => (
             </div>
 
             <div className="flex items-center gap-3 flex-wrap">
-              <button className="bg-primary hover:bg-primary-dark text-font font-bold text-sm px-6 py-3 transition-colors duration-200">
+              <Link href='/services' className="bg-primary hover:bg-primary-dark text-font font-bold text-sm px-6 py-3 transition-colors duration-200">
                 Our Services
-              </button>
-              <button className="border border-primary text-primary hover:bg-primary/5 font-bold text-sm px-6 py-3 transition-colors duration-200">
+              </Link>
+              <Link href='/contact' className="border cursor-pointer border-primary text-primary hover:bg-primary/5 font-bold text-sm px-6 py-3 transition-colors duration-200">
                 Contact Us
-              </button>
+              </Link>
             </div>
           </div>
 

@@ -11,6 +11,8 @@ import {
   Car,
   Calendar,
   Phone,
+  Wrench,
+  Shield,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -45,7 +47,23 @@ type TestDriveItem = {
   read: boolean;
 };
 
-type NotificationItem = ContactItem | TestDriveItem;
+type MaintenanceItem = {
+  kind: "maintenance";
+  id: number;
+  name: string;
+  phone: string;
+  email: string | null;
+  vehicle_model: string | null;
+  license_plate: string | null;
+  request_summary: string;
+  needs_insurance: boolean;
+  insurance: string | null;
+  insurance_policy_number: string | null;
+  created_at: string;
+  read: boolean;
+};
+
+type NotificationItem = ContactItem | TestDriveItem | MaintenanceItem;
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -65,9 +83,16 @@ function typeBadge(kind: NotificationItem["kind"]) {
       </span>
     );
   }
+  if (kind === "test_drive") {
+    return (
+      <span className="inline-block bg-amber-100 text-amber-900 border border-amber-200/80 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+        Test drive
+      </span>
+    );
+  }
   return (
-    <span className="inline-block bg-amber-100 text-amber-900 border border-amber-200/80 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide">
-      Test drive
+    <span className="inline-block bg-emerald-100 text-emerald-900 border border-emerald-200/80 text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide">
+      Maintenance
     </span>
   );
 }
@@ -82,7 +107,7 @@ export default function MessagesPage() {
   useEffect(() => {
     async function fetchMessages() {
       setLoading(true);
-      const res = await fetch("/api/notification/readmessage");
+      const res = await fetch("/api/notification");
       if (!res.ok) {
         setItems([]);
         setLoading(false);
@@ -96,20 +121,15 @@ export default function MessagesPage() {
 
     const channel = supabase
       .channel("admin-notifications-list")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "contacts" },
-        () => {
-          fetchMessages();
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "book_test_driver" },
-        () => {
-          fetchMessages();
-        },
-      )
+      .on("postgres_changes", { event: "*", schema: "public", table: "contacts" }, () => {
+        fetchMessages();
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "book_test_driver" }, () => {
+        fetchMessages();
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "maintenance_requests" }, () => {
+        fetchMessages();
+      })
       .subscribe();
 
     return () => {
@@ -119,16 +139,13 @@ export default function MessagesPage() {
 
   async function handleSelect(item: NotificationItem) {
     setSelected(item);
-
     if (item.read) return;
-
     setItems((prev) =>
       prev.map((m) =>
         m.kind === item.kind && m.id === item.id ? { ...m, read: true } : m,
       ),
     );
     setSelected({ ...item, read: true });
-
     await fetch("/api/notification/markread", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -147,21 +164,30 @@ export default function MessagesPage() {
           m.message.toLowerCase().includes(q)
         );
       }
+      if (m.kind === "test_drive") {
+        return (
+          m.full_name.toLowerCase().includes(q) ||
+          m.email.toLowerCase().includes(q) ||
+          m.phone.toLowerCase().includes(q) ||
+          (m.car_name?.toLowerCase().includes(q) ?? false) ||
+          (m.notes?.toLowerCase().includes(q) ?? false)
+        );
+      }
+      // maintenance
       return (
-        m.full_name.toLowerCase().includes(q) ||
-        m.email.toLowerCase().includes(q) ||
+        m.name.toLowerCase().includes(q) ||
         m.phone.toLowerCase().includes(q) ||
-        (m.car_name?.toLowerCase().includes(q) ?? false) ||
-        (m.notes?.toLowerCase().includes(q) ?? false)
+        (m.email?.toLowerCase().includes(q) ?? false) ||
+        (m.vehicle_model?.toLowerCase().includes(q) ?? false) ||
+        m.request_summary.toLowerCase().includes(q)
       );
     });
   }, [items, search]);
 
   const unreadContact = items.filter((m) => m.kind === "contact" && !m.read).length;
-  const unreadTestDrive = items.filter(
-    (m) => m.kind === "test_drive" && !m.read,
-  ).length;
-  const unreadTotal = unreadContact + unreadTestDrive;
+  const unreadTestDrive = items.filter((m) => m.kind === "test_drive" && !m.read).length;
+  const unreadMaintenance = items.filter((m) => m.kind === "maintenance" && !m.read).length;
+  const unreadTotal = unreadContact + unreadTestDrive + unreadMaintenance;
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -174,28 +200,31 @@ export default function MessagesPage() {
           <ArrowLeft size={15} />
         </button>
         <div>
-          <h1 className="text-lg font-bold text-gray-900 leading-tight">
-            Notifications
-          </h1>
+          <h1 className="text-lg font-bold text-gray-900 leading-tight">Notifications</h1>
           <p className="text-xs text-gray-400">
             {items.length} total
             {unreadTotal > 0 ? (
               <>
-                {" "}
-                —{" "}
+                {" "}—{" "}
                 {unreadContact > 0 && (
                   <span className="text-sky-600 font-semibold">
-                    {unreadContact} contact
-                    {unreadContact !== 1 ? "s" : ""}
+                    {unreadContact} contact{unreadContact !== 1 ? "s" : ""}
                   </span>
                 )}
-                {unreadContact > 0 && unreadTestDrive > 0 ? (
+                {unreadContact > 0 && (unreadTestDrive > 0 || unreadMaintenance > 0) && (
                   <span className="text-gray-400"> · </span>
-                ) : null}
+                )}
                 {unreadTestDrive > 0 && (
                   <span className="text-amber-700 font-semibold">
-                    {unreadTestDrive} test drive
-                    {unreadTestDrive !== 1 ? "s" : ""}
+                    {unreadTestDrive} test drive{unreadTestDrive !== 1 ? "s" : ""}
+                  </span>
+                )}
+                {unreadTestDrive > 0 && unreadMaintenance > 0 && (
+                  <span className="text-gray-400"> · </span>
+                )}
+                {unreadMaintenance > 0 && (
+                  <span className="text-emerald-700 font-semibold">
+                    {unreadMaintenance} maintenance{unreadMaintenance !== 1 ? "s" : ""}
                   </span>
                 )}{" "}
                 <span className="text-gray-500">unread</span>
@@ -209,10 +238,7 @@ export default function MessagesPage() {
         <aside className="w-full max-w-sm bg-white border-r border-gray-100 flex flex-col shrink-0">
           <div className="px-4 py-3 border-b border-gray-100">
             <div className="relative">
-              <Search
-                size={14}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -242,52 +268,66 @@ export default function MessagesPage() {
               filtered.map((item) => {
                 const isUnread = !item.read;
                 const isSelected =
-                  selected &&
-                  selected.kind === item.kind &&
-                  selected.id === item.id;
+                  selected && selected.kind === item.kind && selected.id === item.id;
                 const title =
-                  item.kind === "contact" ? item.name : item.full_name;
+                  item.kind === "contact"
+                    ? item.name
+                    : item.kind === "test_drive"
+                      ? item.full_name
+                      : item.name;
                 const subtitle =
                   item.kind === "contact"
                     ? item.email
-                    : item.car_name ?? `Car #${item.car_id}`;
+                    : item.kind === "test_drive"
+                      ? (item.car_name ?? `Car #${item.car_id}`)
+                      : (item.vehicle_model ?? item.phone);
                 const preview =
                   item.kind === "contact"
                     ? item.message
-                    : `Preferred: ${item.preferred_date}${item.notes ? ` · ${item.notes}` : ""}`;
+                    : item.kind === "test_drive"
+                      ? `Preferred: ${item.preferred_date}${item.notes ? ` · ${item.notes}` : ""}`
+                      : item.request_summary;
+
+                const bgClass =
+                  isSelected
+                    ? "bg-primary/5 border-l-2 border-l-primary border-b-gray-50"
+                    : isUnread
+                      ? item.kind === "test_drive"
+                        ? "bg-amber-50/50 border-b-amber-100/60 hover:bg-amber-50/80"
+                        : item.kind === "maintenance"
+                          ? "bg-emerald-50/50 border-b-emerald-100/60 hover:bg-emerald-50/80"
+                          : "bg-sky-50/60 border-b-sky-100/60 hover:bg-sky-50"
+                      : "border-b-gray-50 hover:bg-gray-50";
+
+                const avatarClass =
+                  isUnread
+                    ? item.kind === "test_drive"
+                      ? "bg-amber-500 text-white"
+                      : item.kind === "maintenance"
+                        ? "bg-emerald-600 text-white"
+                        : "bg-sky-600 text-white"
+                    : item.kind === "test_drive"
+                      ? "bg-amber-100 text-amber-800"
+                      : item.kind === "maintenance"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-sky-100 text-sky-800";
 
                 return (
                   <button
                     key={`${item.kind}-${item.id}`}
                     type="button"
                     onClick={() => handleSelect(item)}
-                    className={`w-full text-left px-4 py-3.5 border-b transition-colors
-                      ${
-                        isSelected
-                          ? "bg-primary/5 border-l-2 border-l-primary border-b-gray-50"
-                          : isUnread
-                            ? item.kind === "test_drive"
-                              ? "bg-amber-50/50 border-b-amber-100/60 hover:bg-amber-50/80"
-                              : "bg-sky-50/60 border-b-sky-100/60 hover:bg-sky-50"
-                            : "border-b-gray-50 hover:bg-gray-50"
-                      }`}
+                    className={`w-full text-left px-4 py-3.5 border-b transition-colors ${bgClass}`}
                   >
                     <div className="flex items-center gap-2.5 mb-1">
                       <div className="relative shrink-0">
                         <div
-                          className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold
-                            ${
-                              isUnread
-                                ? item.kind === "test_drive"
-                                  ? "bg-amber-500 text-white"
-                                  : "bg-sky-600 text-white"
-                                : item.kind === "test_drive"
-                                  ? "bg-amber-100 text-amber-800"
-                                  : "bg-sky-100 text-sky-800"
-                            }`}
+                          className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${avatarClass}`}
                         >
                           {item.kind === "test_drive" ? (
                             <Car size={14} />
+                          ) : item.kind === "maintenance" ? (
+                            <Wrench size={14} />
                           ) : (
                             title.charAt(0).toUpperCase()
                           )}
@@ -296,28 +336,21 @@ export default function MessagesPage() {
                           <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white" />
                         )}
                       </div>
-
                       <span
-                        className={`text-sm truncate flex-1
-                          ${isUnread ? "font-bold text-gray-900" : "font-medium text-gray-600"}`}
+                        className={`text-sm truncate flex-1 ${isUnread ? "font-bold text-gray-900" : "font-medium text-gray-600"}`}
                       >
                         {title}
                       </span>
                       <span
-                        className={`text-[10px] shrink-0
-                          ${isUnread ? "text-primary font-semibold" : "text-gray-400"}`}
+                        className={`text-[10px] shrink-0 ${isUnread ? "text-primary font-semibold" : "text-gray-400"}`}
                       >
                         {timeAgo(item.created_at)}
                       </span>
                     </div>
 
-                    <p className="text-xs text-gray-400 mb-1 truncate pl-9">
-                      {subtitle}
-                    </p>
-
+                    <p className="text-xs text-gray-400 mb-1 truncate pl-9">{subtitle}</p>
                     <p
-                      className={`text-xs truncate pl-9
-                        ${isUnread ? "text-gray-700 font-medium" : "text-gray-400"}`}
+                      className={`text-xs truncate pl-9 ${isUnread ? "text-gray-700 font-medium" : "text-gray-400"}`}
                     >
                       {preview}
                     </p>
@@ -341,15 +374,15 @@ export default function MessagesPage() {
           {selected ? (
             selected.kind === "contact" ? (
               <ContactDetail selected={selected} />
-            ) : (
+            ) : selected.kind === "test_drive" ? (
               <TestDriveDetail selected={selected} />
+            ) : (
+              <MaintenanceDetail selected={selected} />
             )
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-300 gap-3">
               <Inbox size={48} strokeWidth={1} />
-              <p className="text-base font-medium">
-                Select a notification to read
-              </p>
+              <p className="text-base font-medium">Select a notification to read</p>
             </div>
           )}
         </main>
@@ -370,54 +403,35 @@ function ContactDetail({ selected }: { selected: ContactItem }) {
             <h2 className="text-xl font-bold text-gray-900">{selected.name}</h2>
             {typeBadge("contact")}
             <span
-              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
-                ${
-                  selected.read
-                    ? "bg-green-100 text-green-600"
-                    : "bg-red-100 text-red-500"
-                }`}
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${selected.read ? "bg-green-100 text-green-600" : "bg-red-100 text-red-500"}`}
             >
               {selected.read ? "Read" : "Unread"}
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-1">
             <Mail size={12} className="text-gray-400" />
-            <a
-              href={`mailto:${selected.email}`}
-              className="text-sm text-primary hover:underline"
-            >
+            <a href={`mailto:${selected.email}`} className="text-sm text-primary hover:underline">
               {selected.email}
             </a>
           </div>
           {selected.phonenumber ? (
             <div className="flex items-center gap-1.5 mt-1">
               <Phone size={12} className="text-gray-400" />
-              <a
-                href={`tel:${selected.phonenumber}`}
-                className="text-sm text-gray-600 hover:text-primary"
-              >
+              <a href={`tel:${selected.phonenumber}`} className="text-sm text-gray-600 hover:text-primary">
                 {selected.phonenumber}
               </a>
             </div>
           ) : null}
           <div className="flex items-center gap-1.5 mt-1">
             <Clock size={12} className="text-gray-400" />
-            <span className="text-xs text-gray-400">
-              {new Date(selected.created_at).toLocaleString()}
-            </span>
+            <span className="text-xs text-gray-400">{new Date(selected.created_at).toLocaleString()}</span>
           </div>
         </div>
       </div>
-
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
-          Message
-        </p>
-        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-          {selected.message}
-        </p>
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Message</p>
+        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{selected.message}</p>
       </div>
-
       <div className="mt-6">
         <a
           href={`mailto:${selected.email}?subject=Re: Your message`}
@@ -440,36 +454,23 @@ function TestDriveDetail({ selected }: { selected: TestDriveItem }) {
         </div>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl font-bold text-gray-900">
-              {selected.full_name}
-            </h2>
+            <h2 className="text-xl font-bold text-gray-900">{selected.full_name}</h2>
             {typeBadge("test_drive")}
             <span
-              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide
-                ${
-                  selected.read
-                    ? "bg-green-100 text-green-600"
-                    : "bg-red-100 text-red-500"
-                }`}
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${selected.read ? "bg-green-100 text-green-600" : "bg-red-100 text-red-500"}`}
             >
               {selected.read ? "Read" : "Unread"}
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-1">
             <Mail size={12} className="text-gray-400" />
-            <a
-              href={`mailto:${selected.email}`}
-              className="text-sm text-primary hover:underline"
-            >
+            <a href={`mailto:${selected.email}`} className="text-sm text-primary hover:underline">
               {selected.email}
             </a>
           </div>
           <div className="flex items-center gap-1.5 mt-1">
             <Phone size={12} className="text-gray-400" />
-            <a
-              href={`tel:${selected.phone}`}
-              className="text-sm text-gray-600 hover:text-primary"
-            >
+            <a href={`tel:${selected.phone}`} className="text-sm text-gray-600 hover:text-primary">
               {selected.phone}
             </a>
           </div>
@@ -477,9 +478,7 @@ function TestDriveDetail({ selected }: { selected: TestDriveItem }) {
             <Calendar size={12} className="text-gray-400" />
             <span className="text-xs text-gray-600">
               Preferred date:{" "}
-              <span className="font-semibold text-gray-800">
-                {selected.preferred_date}
-              </span>
+              <span className="font-semibold text-gray-800">{selected.preferred_date}</span>
             </span>
           </div>
           <div className="flex items-center gap-1.5 mt-1">
@@ -490,12 +489,9 @@ function TestDriveDetail({ selected }: { selected: TestDriveItem }) {
           </div>
         </div>
       </div>
-
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
         <div>
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
-            Vehicle
-          </p>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Vehicle</p>
           <p className="text-sm font-medium text-gray-900">
             {selected.car_name ?? `Listing #${selected.car_id}`}
           </p>
@@ -509,16 +505,11 @@ function TestDriveDetail({ selected }: { selected: TestDriveItem }) {
         </div>
         {selected.notes ? (
           <div>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
-              Notes
-            </p>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-              {selected.notes}
-            </p>
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Notes</p>
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{selected.notes}</p>
           </div>
         ) : null}
       </div>
-
       <div className="mt-6 flex flex-wrap gap-3">
         <a
           href={`mailto:${selected.email}?subject=Re: Test drive request`}
@@ -526,6 +517,108 @@ function TestDriveDetail({ selected }: { selected: TestDriveItem }) {
         >
           <Mail size={14} />
           Email customer
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function MaintenanceDetail({ selected }: { selected: MaintenanceItem }) {
+  return (
+    <div className="p-8 max-w-2xl w-full">
+      <div className="flex items-start gap-4 mb-8">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-800 shrink-0">
+          <Wrench size={22} />
+        </div>
+        <div className="flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h2 className="text-xl font-bold text-gray-900">{selected.name}</h2>
+            {typeBadge("maintenance")}
+            <span
+              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide ${selected.read ? "bg-green-100 text-green-600" : "bg-red-100 text-red-500"}`}
+            >
+              {selected.read ? "Read" : "Unread"}
+            </span>
+          </div>
+          {selected.email && (
+            <div className="flex items-center gap-1.5 mt-1">
+              <Mail size={12} className="text-gray-400" />
+              <a href={`mailto:${selected.email}`} className="text-sm text-primary hover:underline">
+                {selected.email}
+              </a>
+            </div>
+          )}
+          <div className="flex items-center gap-1.5 mt-1">
+            <Phone size={12} className="text-gray-400" />
+            <a href={`tel:${selected.phone}`} className="text-sm text-gray-600 hover:text-primary">
+              {selected.phone}
+            </a>
+          </div>
+          <div className="flex items-center gap-1.5 mt-1">
+            <Clock size={12} className="text-gray-400" />
+            <span className="text-xs text-gray-400">
+              Submitted {new Date(selected.created_at).toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+        <div>
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">
+            Request Summary
+          </p>
+          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+            {selected.request_summary}
+          </p>
+        </div>
+
+        {(selected.vehicle_model || selected.license_plate) && (
+          <div className="border-t border-gray-50 pt-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2">Vehicle</p>
+            {selected.vehicle_model && (
+              <p className="text-sm font-medium text-gray-900">{selected.vehicle_model}</p>
+            )}
+            {selected.license_plate && (
+              <p className="text-sm text-gray-500 mt-0.5">Plate: {selected.license_plate}</p>
+            )}
+          </div>
+        )}
+
+        {selected.needs_insurance && (
+          <div className="border-t border-gray-50 pt-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
+              <Shield size={11} />
+              Insurance
+            </p>
+            {selected.insurance && (
+              <p className="text-sm font-medium text-gray-900">{selected.insurance}</p>
+            )}
+            {selected.insurance_policy_number && (
+              <p className="text-sm text-gray-500 mt-0.5">
+                Policy #: {selected.insurance_policy_number}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-3">
+        {selected.email && (
+          <a
+            href={`mailto:${selected.email}?subject=Re: Maintenance Request`}
+            className="inline-flex items-center gap-2 bg-primary text-white text-sm font-semibold px-5 py-2.5 hover:bg-primary-dark transition-colors shadow-md shadow-primary/20"
+          >
+            <Mail size={14} />
+            Email customer
+          </a>
+        )}
+        <a
+          href={`tel:${selected.phone}`}
+          className="inline-flex items-center gap-2 border border-gray-200 text-gray-700 text-sm font-semibold px-5 py-2.5 hover:bg-gray-50 transition-colors"
+        >
+          <Phone size={14} />
+          Call customer
         </a>
       </div>
     </div>

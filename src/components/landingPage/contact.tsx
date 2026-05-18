@@ -119,21 +119,24 @@ export default function Contact() {
     <div className="min-h-screen bg-bg text-font">
       <ToastContainer theme="dark" className="!top-20" />
       <Navbar />
-      {/* ─── Hero Section ─── */}
+
+      {/* ─── Hero Section — matches About Us gradient style ─── */}
       <section className="relative h-[min(52vh,420px)] w-full overflow-hidden">
-        <div className="absolute inset-0 z-10 bg-ink/60" />
-
-        <img
-          src="/marcedes.jpg"
-          alt="Car showroom"
-          className="absolute inset-0 h-full w-full object-cover"
+        <div
+          className="absolute inset-0 bg-cover bg-center scale-105"
+          style={{ backgroundImage: "url('/marcedes.jpg')" }}
         />
-
-        <div className="relative z-20 flex h-full flex-col items-center justify-center px-4 text-center">
+        <div className="absolute inset-0 bg-linear-to-b from-primary-dark/85 via-primary/60 to-ink/80" />
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
+          <span className="inline-block text-accent text-xs font-bold tracking-[0.25em] uppercase mb-4 border border-accent/40 px-4 py-1 rounded-full">
+            Kigali Special Economic Zone · Rwanda
+          </span>
           <h1 className="text-3xl font-bold tracking-wide text-font md:text-4xl">
             Experience Our Service
           </h1>
-          <p className="mt-3 text-sm text-font/80">Schedule a visit</p>
+          <p className="mt-3 text-sm text-font/80 uppercase tracking-[0.15em]">
+            Schedule a visit
+          </p>
         </div>
       </section>
 
@@ -148,7 +151,7 @@ export default function Contact() {
           </div>
 
           <div className="flex flex-col items-stretch gap-6 md:flex-row">
-            <div className="min-h-[280px] flex-1 overflow-hidden  border border-line/25 bg-gray-dark shadow-sm sm:min-h-[360px]">
+            <div className="min-h-[280px] flex-1 overflow-hidden border border-line/25 bg-gray-dark shadow-sm sm:min-h-[360px]">
               <iframe
                 title="Our Location"
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.4956836786455!2d30.05887!3d-1.94995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMcKwNTYnNTkuOCJTIDMwwrAwMyczMS45IkU!5e0!3m2!1sen!2srw!4v1681234567890!5m2!1sen!2srw"
@@ -222,7 +225,6 @@ export default function Contact() {
                   <ErrorMsg field="message" />
                 </div>
 
-                {/* Submit button — matches login page style */}
                 <button
                   type="submit"
                   disabled={isSending}

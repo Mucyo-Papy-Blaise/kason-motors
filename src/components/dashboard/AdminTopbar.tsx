@@ -61,6 +61,16 @@ export default function AdminTopbar({ fullName, roleLabel }: AdminTopbarProps) {
         { event: "UPDATE", schema: "public", table: "book_test_driver" },
         () => fetchUnread(),
       )
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "maintenance_requests" },
+        () => fetchUnread(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "maintenance_requests" },
+        () => fetchUnread(),
+      )
       .subscribe();
 
     return () => {

@@ -13,9 +13,9 @@ export const AboutPage = () => (
   <Navbar />
     <AboutHero />
     <AboutMission />
-    <AboutServices />
+    {/* <AboutServices /> */}
     <AboutAudience />
-    <AboutStrengths />
+    {/* <AboutStrengths /> */}
     {/* <AboutClients/> */}
     <AboutCta />
     <Footer />

@@ -11,7 +11,7 @@ import {
 import { stats } from "@/lib/mockData";
 
 const heroBackground =
-  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1600&q=80";
+  "/imageprovided.jpg";
 
 const reasons = [
   {

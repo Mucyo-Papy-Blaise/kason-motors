@@ -25,7 +25,7 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const price = Number(car.price || 0);
 
   // Only show the badge if it has a meaningful value (not empty, not "Featured" by default)
-  const DEFAULT_BADGES = ["featured", ""];
+  const DEFAULT_BADGES = ["", ""];
   const showBadge =
     car.badge && !DEFAULT_BADGES.includes(car.badge.toLowerCase().trim());
 
