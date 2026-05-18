@@ -14,45 +14,44 @@ export type Database = {
   public: {
     Tables: {
       profiles: {
-  Row: {
-    created_at: string;
-    email: string;
-    full_name: string;
-    id: string;
-    role: UserRole;
-     password?: string | null; 
-    updated_at: string;
+        Row: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          id: string;
+          role: UserRole;
+          password?: string | null;
+          updated_at: string;
+          reset_token?: string | null;
+          reset_token_expiry?: string | null;
+        };
 
-    reset_token?: string | null;
-    reset_token_expiry?: string | null;
-  };
+        Insert: {
+          created_at?: string;
+          email: string;
+          full_name: string;
+          id: string;
+          role?: UserRole;
+          updated_at?: string;
+          password?: string | null;
+          reset_token?: string | null;
+          reset_token_expiry?: string | null;
+        };
 
-  Insert: {
-    created_at?: string;
-    email: string;
-    full_name: string;
-    id: string;
-    role?: UserRole;
-    updated_at?: string;
- password?: string | null; 
-    reset_token?: string | null;
-    reset_token_expiry?: string | null;
-  };
+        Update: {
+          created_at?: string;
+          email?: string;
+          full_name?: string;
+          id?: string;
+          role?: UserRole;
+          updated_at?: string;
+          password?: string | null;
+          reset_token?: string | null;
+          reset_token_expiry?: string | null;
+        };
 
-  Update: {
-    created_at?: string;
-    email?: string;
-    full_name?: string;
-    id?: string;
-    role?: UserRole;
-    updated_at?: string;
- password?: string | null; 
-    reset_token?: string | null;
-    reset_token_expiry?: string | null;
-  };
-
-  Relationships: [];
-};
+        Relationships: [];
+      };
 
       cars: {
         Row: {
@@ -67,9 +66,14 @@ export type Database = {
           transmission: string | null;
           image: string | null;
           badge: string | null;
+
+          // ✅ ADDED FIELD
+          full_option: boolean | null;
+
           created_at: string | null;
           updated_at: string | null;
         };
+
         Insert: {
           id?: number;
           name?: string | null;
@@ -82,9 +86,14 @@ export type Database = {
           transmission?: string | null;
           image?: string | null;
           badge?: string | null;
+
+          // ✅ ADDED FIELD
+          full_option?: boolean | null;
+
           created_at?: string | null;
           updated_at?: string | null;
         };
+
         Update: {
           id?: number;
           name?: string | null;
@@ -97,9 +106,14 @@ export type Database = {
           transmission?: string | null;
           image?: string | null;
           badge?: string | null;
+
+          // ✅ ADDED FIELD
+          full_option?: boolean | null;
+
           created_at?: string | null;
           updated_at?: string | null;
         };
+
         Relationships: [];
       };
 
@@ -115,6 +129,7 @@ export type Database = {
           created_at: string;
           read: boolean;
         };
+
         Insert: {
           id?: number;
           car_id: number;
@@ -126,6 +141,7 @@ export type Database = {
           created_at?: string;
           read?: boolean;
         };
+
         Update: {
           id?: number;
           car_id?: number;
@@ -137,10 +153,10 @@ export type Database = {
           created_at?: string;
           read?: boolean;
         };
+
         Relationships: [];
       };
 
-      // ✅ CONTACT / MESSAGES TABLE (phonenumber added)
       messages: {
         Row: {
           id: number;
@@ -151,6 +167,7 @@ export type Database = {
           created_at: string;
           read: boolean;
         };
+
         Insert: {
           id?: number;
           name: string;
@@ -160,6 +177,7 @@ export type Database = {
           created_at?: string;
           read: boolean;
         };
+
         Update: {
           id?: number;
           name?: string;
@@ -169,10 +187,10 @@ export type Database = {
           created_at?: string;
           read?: boolean;
         };
+
         Relationships: [];
       };
 
-      // ✅ TESTIMONIALS TABLE (no rating, no avatar)
       testimonials: {
         Row: {
           id: number;
@@ -181,6 +199,7 @@ export type Database = {
           text: string;
           created_at: string;
         };
+
         Insert: {
           id?: number;
           name: string;
@@ -188,6 +207,7 @@ export type Database = {
           text: string;
           created_at?: string;
         };
+
         Update: {
           id?: number;
           name?: string;
@@ -195,6 +215,7 @@ export type Database = {
           text?: string;
           created_at?: string;
         };
+
         Relationships: [];
       };
     };
