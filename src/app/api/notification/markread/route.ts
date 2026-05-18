@@ -25,30 +25,38 @@ export async function PATCH(request: NextRequest) {
     kind?: unknown;
   };
 
-  const kind = body.kind === "test_drive" ? "test_drive" : "contact";
+  const rawKind = body.kind;
+  const kind =
+    rawKind === "test_drive"
+      ? "test_drive"
+      : rawKind === "maintenance"
+        ? "maintenance"
+        : "contact";
 
   const rawId = body.id;
-  const id =
-    kind === "test_drive"
-      ? typeof rawId === "number"
-        ? rawId
-        : typeof rawId === "string"
-          ? Number(rawId)
-          : NaN
-      : rawId;
+  const needsNumericId = kind === "test_drive" || kind === "maintenance";
+  const id = needsNumericId
+    ? typeof rawId === "number"
+      ? rawId
+      : typeof rawId === "string"
+        ? Number(rawId)
+        : NaN
+    : rawId;
 
-  if (kind === "test_drive") {
+  if (needsNumericId) {
     if (!Number.isFinite(id as number)) {
-      return NextResponse.json(
-        { error: "Message ID is required" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Message ID is required" }, { status: 400 });
     }
   } else if (typeof id !== "string" && typeof id !== "number") {
     return NextResponse.json({ error: "Message ID is required" }, { status: 400 });
   }
 
-  const table = kind === "test_drive" ? "book_test_driver" : "contacts";
+  const table =
+    kind === "test_drive"
+      ? "book_test_driver"
+      : kind === "maintenance"
+        ? "maintenance_requests"
+        : "contacts";
 
   const { error } = await supabase
     .from(table)

@@ -19,7 +19,13 @@ const buildCurrentUser = async (token: string | null | undefined) => {
     return null;
   }
 
-  const profile = await getProfileByUserId(payload.sub);
+  let profile = null;
+  try {
+    profile = await getProfileByUserId(payload.sub);
+  } catch (error) {
+    console.error("Failed to resolve current user profile", error);
+    return null;
+  }
 
   if (!profile) {
     return null;

@@ -11,7 +11,7 @@ import {
   LogOut,
   ChevronRight,
   Bell,
-  MessageSquare
+  MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
@@ -20,9 +20,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
-
-
-
 
 type AdminSidebarProps = {
   fullName: string;
@@ -74,20 +71,18 @@ const menuGroups = [
       },
     ],
   },
-
-{
-label:'Testimonial',
-items:[
- {
- label: "Add Testimonial",
+  {
+    label: "Testimonial",
+    items: [
+      {
+        label: "Add Testimonial",
         href: "/admin/testimonials",
         icon: MessageSquare,
         badge: null,
- },
-],
-},
-]
-;
+      },
+    ],
+  },
+];
 
 export default function AdminSidebar({ fullName }: AdminSidebarProps) {
   const pathname = usePathname();
@@ -116,6 +111,11 @@ export default function AdminSidebar({ fullName }: AdminSidebarProps) {
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "book_test_driver" },
+        () => fetchNotificationUnread(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "maintenance_requests" },
         () => fetchNotificationUnread(),
       )
       .subscribe();

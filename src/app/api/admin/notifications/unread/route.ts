@@ -20,13 +20,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
 
-  const [contactsRes, bookingsRes] = await Promise.all([
+  const [contactsRes, bookingsRes, maintenanceRes] = await Promise.all([
     supabase
       .from("contacts")
       .select("*", { count: "exact", head: true })
       .eq("read", false),
     supabase
       .from("book_test_driver")
+      .select("*", { count: "exact", head: true })
+      .eq("read", false),
+    supabase
+      .from("maintenance_requests")
       .select("*", { count: "exact", head: true })
       .eq("read", false),
   ]);
@@ -45,12 +49,21 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  if (maintenanceRes.error) {
+    return NextResponse.json(
+      { message: maintenanceRes.error.message },
+      { status: 500 },
+    );
+  }
+
   const contactUnread = contactsRes.count ?? 0;
   const testDriveUnread = bookingsRes.count ?? 0;
+  const maintenanceUnread = maintenanceRes.count ?? 0;
 
   return NextResponse.json({
     contactUnread,
     testDriveUnread,
-    total: contactUnread + testDriveUnread,
+    maintenanceUnread,
+    total: contactUnread + testDriveUnread + maintenanceUnread,
   });
 }
