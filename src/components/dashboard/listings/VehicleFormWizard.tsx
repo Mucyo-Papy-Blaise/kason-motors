@@ -45,7 +45,7 @@ type SelectFieldProps = {
 
 const REQUIRED_FIELDS_BY_STEP: Record<number, (keyof VehicleFormData)[]> = {
   0: ["title", "brand", "model", "year", "condition", "bodyType"],
-  1: ["mileage", "engineSize", "fuel", "transmission", "driveType"],
+  // 1: ["mileage", "engineSize", "fuel", "transmission", "driveType"],
   2: [],
   3: ["price", "description", "image", "imageUrls"],
 };
@@ -400,35 +400,8 @@ export default function VehicleFormWizard({
       {/* ── STEP 1: Technical ── */}
       {currentStep === 1 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
-              Mileage (km) <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="mileage"
-              value={form.mileage}
-              onChange={handleChange}
-              className={inputClass("mileage")}
-            />
-            {errors.mileage ? (
-              <p className="mt-1.5 text-xs text-red-500">{errors.mileage}</p>
-            ) : null}
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
-              Engine Size <span className="text-red-500">*</span>
-            </label>
-            <input
-              name="engineSize"
-              value={form.engineSize}
-              onChange={handleChange}
-              className={inputClass("engineSize")}
-              placeholder="2.0L"
-            />
-            {errors.engineSize ? (
-              <p className="mt-1.5 text-xs text-red-500">{errors.engineSize}</p>
-            ) : null}
-          </div>
+
+          {/* Row 1: Fuel Type | Transmission */}
           <SelectField
             label="Fuel Type *"
             name="fuel"
@@ -445,6 +418,8 @@ export default function VehicleFormWizard({
             error={errors.transmission}
             onChange={handleChange}
           />
+
+          {/* Row 2: Drive Type | Mileage */}
           <SelectField
             label="Drive Type *"
             name="driveType"
@@ -453,6 +428,22 @@ export default function VehicleFormWizard({
             error={errors.driveType}
             onChange={handleChange}
           />
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Mileage (km) <span className="text-red-500">*</span>
+            </label>
+            <input
+              name="mileage"
+              value={form.mileage}
+              onChange={handleChange}
+              className={inputClass("mileage")}
+            />
+            {errors.mileage ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.mileage}</p>
+            ) : null}
+          </div>
+
+          {/* Row 3: Horsepower | Range */}
           <div>
             <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
               Horsepower (Optional)
@@ -490,6 +481,7 @@ export default function VehicleFormWizard({
               <p className="mt-1.5 text-xs text-red-500">{errors.range}</p>
             ) : null}
           </div>
+
         </div>
       ) : null}
 

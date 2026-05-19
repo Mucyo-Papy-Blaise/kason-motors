@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Navbar from "../landingPage/Navbar";
 import Footer from "../landingPage/Footer";
-import { User, Phone, Mail, Car, Shield, FileText, X, Send, CheckCircle } from "lucide-react";
+import { User, Car, Shield, FileText, X, Send, CheckCircle } from "lucide-react";
 
 const EMPTY_MAINTENANCE_FORM = {
   requestSummary: "",
@@ -171,10 +171,10 @@ export const MaintenancePage: React.FC = () => {
       <Navbar />
       <main className="min-h-screen bg-bg text-font">
         {/* Hero */}
-        <section className="relative h-[min(52vh,420px)] w-full overflow-hidden">
+        <section className="relative h-100 md:h-120 overflow-hidden">
           <div
-            className="absolute inset-0 bg-cover bg-center scale-105"
-            style={{ backgroundImage: "url('/marcedes.jpg')" }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/about3.jpg')" }}
           />
           <div className="absolute inset-0 bg-linear-to-b from-primary-dark/85 via-primary/60 to-ink/80" />
           <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
@@ -191,7 +191,6 @@ export const MaintenancePage: React.FC = () => {
         {/* Form */}
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Request Summary */}
             <div className="bg-gray-dark border border-line/25 rounded-xl p-6">
               <SectionHeader
                 icon={<FileText size={16} />}
@@ -210,7 +209,6 @@ export const MaintenancePage: React.FC = () => {
               </Field>
             </div>
 
-            {/* Contact Details */}
             <div className="bg-gray-dark border border-line/25 rounded-xl p-6">
               <SectionHeader
                 icon={<User size={16} />}
@@ -252,7 +250,6 @@ export const MaintenancePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Vehicle */}
             <div className="bg-gray-dark border border-line/25 rounded-xl p-6">
               <SectionHeader
                 icon={<Car size={16} />}
@@ -281,7 +278,6 @@ export const MaintenancePage: React.FC = () => {
               </div>
             </div>
 
-            {/* Insurance */}
             <div className="bg-gray-dark border border-line/25 rounded-xl p-6">
               <SectionHeader
                 icon={<Shield size={16} />}

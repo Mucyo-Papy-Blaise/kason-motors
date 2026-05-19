@@ -10,8 +10,7 @@ import {
 } from "lucide-react";
 import { stats } from "@/lib/mockData";
 
-const heroBackground =
-  "/imageprovided.jpg";
+const heroBackground = "/imageprovided.jpg";
 
 const reasons = [
   {
@@ -42,12 +41,15 @@ export default function WhyChooseUs() {
 
   return (
     <section className="relative w-full overflow-hidden px-4 py-12 sm:px-6 sm:py-20" ref={ref}>
-      <div
-        className="absolute inset-0 bg-fixed bg-cover bg-center"
-        style={{ backgroundImage: `url(${heroBackground})` }}
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-black/65" aria-hidden="true" />
+<div
+  className="absolute inset-0 bg-fixed bg-center"
+  style={{
+    backgroundImage: `url(${heroBackground})`,
+    backgroundSize: "100% auto",
+  }}
+  aria-hidden="true"
+/>
+      <div className="absolute inset-0 bg-black/80" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto max-w-7xl space-y-8 text-white sm:space-y-12">
         <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
@@ -84,7 +86,7 @@ export default function WhyChooseUs() {
               Why Choose Kason Motors?
             </h2>
             <p className="text-sm text-white/70 leading-relaxed">
-              Rwanda’s most trusted dealer blends live expertise with transparent
+              Rwanda's most trusted dealer blends live expertise with transparent
               processes so you can shop with confidence.
             </p>
           </div>

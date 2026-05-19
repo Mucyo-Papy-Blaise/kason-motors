@@ -120,10 +120,10 @@ export default function Contact() {
       <ToastContainer theme="dark" className="!top-20" />
       <Navbar />
 
-      {/* ─── Hero Section — matches About Us gradient style ─── */}
-      <section className="relative h-[min(52vh,420px)] w-full overflow-hidden">
+      {/* ─── Hero Section ─── */}
+      <section className="relative h-100 md:h-120 overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center scale-105"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/marcedes.jpg')" }}
         />
         <div className="absolute inset-0 bg-linear-to-b from-primary-dark/85 via-primary/60 to-ink/80" />
@@ -170,7 +170,6 @@ export default function Contact() {
               </h3>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Full Name */}
                 <div>
                   <label className={labelClass}>Full Name</label>
                   <input
@@ -183,7 +182,6 @@ export default function Contact() {
                   <ErrorMsg field="name" />
                 </div>
 
-                {/* Email */}
                 <div>
                   <label className={labelClass}>Email Address</label>
                   <input
@@ -197,7 +195,6 @@ export default function Contact() {
                   <ErrorMsg field="email" />
                 </div>
 
-                {/* Phone Number */}
                 <div>
                   <label className={labelClass}>Phone Number</label>
                   <input
@@ -211,7 +208,6 @@ export default function Contact() {
                   <ErrorMsg field="phonenumber" />
                 </div>
 
-                {/* Message */}
                 <div>
                   <label className={labelClass}>Your Message</label>
                   <textarea
