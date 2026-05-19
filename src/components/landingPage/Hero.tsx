@@ -83,7 +83,7 @@ function buildSlidesFromVehicles(data: Vehicle[]): HeroSlide[] {
 
     return {
       id: car.id,
-      title: "Order from highest price to the lowest price",
+      title: "Expensive to Affordable",
       car: name.toUpperCase(),
       price: `${Number(String(car?.price || 0).replace(/,/g, "")).toLocaleString()} RWF`,
       period: "",

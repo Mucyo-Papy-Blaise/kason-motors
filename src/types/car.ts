@@ -6,7 +6,6 @@ export type Car = {
   condition: string;
   bodyType: string;
   driveType: string;
-  engineSize: string;
   horsepower: string | number;
   range: string | number;
   exteriorColor: string;
@@ -14,7 +13,7 @@ export type Car = {
   doors: string | number;
   seats: string | number;
   negotiable: boolean;
-  fullOption: boolean; // ← NEW: whether the car has all options/features
+  fullOption: boolean;
   full_option?: boolean;
   description: string;
   videoUrl: string;
@@ -40,7 +39,6 @@ export const EMPTY_FORM = {
   condition: "",
   bodyType: "",
   driveType: "",
-  engineSize: "",
   horsepower: "",
   range: "",
   exteriorColor: "",
@@ -48,7 +46,7 @@ export const EMPTY_FORM = {
   doors: "",
   seats: "",
   negotiable: false,
-  fullOption: false, // ← NEW: default is OFF
+  fullOption: false,
   description: "",
   videoUrl: "",
   features: [] as string[],

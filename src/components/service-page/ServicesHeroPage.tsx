@@ -1,7 +1,7 @@
 "use client";
 
 
-export const AboutHero = () => (
+export const ServicesHero = () => (
   <section className="relative h-100 md:h-120 overflow-hidden">
     <div
       className="absolute inset-0 bg-cover bg-center "
@@ -17,7 +17,7 @@ export const AboutHero = () => (
         Kigali Special Economic Zone · Rwanda
       </span>
       <h1 className="text-font text-4xl md:text-5xl font-bold leading-tight mb-4">
-        About Kason Motor Ltd
+       Premium Services by Kason Motor Ltd
       </h1>
       <p className="text-font/70 text-sm md:text-base uppercase tracking-[0.15em] max-w-lg">
         Driving Rwanda&apos;s Transition to Sustainable, Smart Mobility

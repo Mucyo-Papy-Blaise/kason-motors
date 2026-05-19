@@ -20,7 +20,7 @@ export const vehicleFormSchema = z.object({
     .refine((value) => !Number.isNaN(Number(value.replace(/,/g, ""))) && Number(value.replace(/,/g, "")) >= 0, {
       message: "Mileage must be a valid number",
     }),
-  engineSize: z.string().min(1, "Engine size is required"),
+  // engineSize: z.string().min(1, "Engine size is required"),
   fuel: z.string().min(1, "Please select fuel type"),
   transmission: z.string().min(1, "Please select transmission"),
   driveType: z.string().min(1, "Please select drive type"),

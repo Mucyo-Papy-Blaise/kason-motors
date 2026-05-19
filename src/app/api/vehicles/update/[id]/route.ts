@@ -37,11 +37,11 @@ export async function PUT(
       condition: payloadData.condition,
       body_type: payloadData.bodyType,
       mileage: Number(payloadData.mileage.replace(/,/g, "")),
-      engine_size: payloadData.engineSize,
       fuel: payloadData.fuel,
       transmission: payloadData.transmission,
       drive_type: payloadData.driveType,
       horsepower: payloadData.horsepower ? Number(payloadData.horsepower) : null,
+      range: payloadData.range ? Number(payloadData.range) : null, // ✅ FIXED
       exterior_color: payloadData.exteriorColor || null,
       interior_color: payloadData.interiorColor || null,
       doors: payloadData.doors ? Number(payloadData.doors) : null,
