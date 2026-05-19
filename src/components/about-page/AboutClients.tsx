@@ -1,20 +1,21 @@
 "use client";
 
+import Link from "next/link";
 import React from "react";
 
 const REGIONS = [
-  { label: "Middle Asia", flag: "🌏", markets: ["Kazakhstan", "Uzbekistan", "Kyrgyzstan", "Tajikistan"] },
+  { label: "Middle Asia", flag: "🌏", markets: ["China"] },
   { label: "Russia", flag: "🌍", markets: ["Moscow", "St. Petersburg", "Novosibirsk", "Ekaterinburg"] },
   { label: "Middle East", flag: "🌎", markets: ["UAE", "Saudi Arabia", "Kuwait", "Qatar"] },
-  { label: "Africa", flag: "🌍", markets: ["Rwanda", "Kenya", "Tanzania", "Uganda"] },
+  { label: "Africa", flag: "🌍", markets: ["Rwanda"] },
 ];
 
 const OFFICES = [
   { city: "Liaocheng", country: "China", role: "Head Office", icon: "🏢" },
-  { city: "Khorgos", country: "China / Kazakhstan", role: "Representative Office", icon: "📍" },
-  { city: "Tashkent", country: "Uzbekistan", role: "Representative Office", icon: "📍" },
-  { city: "Moscow", country: "Russia", role: "Representative Office", icon: "📍" },
-  { city: "Africa (×4)", country: "East & Central Africa", role: "Representative Offices", icon: "📍" },
+  // { city: "Khorgos", country: "China / Kazakhstan", role: "Representative Office", icon: "📍" },
+  // { city: "Tashkent", country: "Uzbekistan", role: "Representative Office", icon: "📍" },
+  // { city: "Moscow", country: "Russia", role: "Representative Office", icon: "📍" },
+  { city: "Africa (×4)", country: "Rwanda", role: "Representative Offices", icon: "📍" },
 ];
 
 export const AboutClients: React.FC = () => (
@@ -98,9 +99,9 @@ export const AboutClients: React.FC = () => (
             partnership with you.
           </p>
         </div>
-        <button className="bg-primary hover:bg-primary-dark text-font font-bold text-sm px-6 py-3 transition-colors duration-200 shrink-0">
+        <Link href='/contact' className="bg-primary hover:bg-primary-dark text-font font-bold text-sm px-6 py-3 transition-colors duration-200 shrink-0">
           Get In Touch
-        </button>
+        </Link>
       </div>
 
     </div>

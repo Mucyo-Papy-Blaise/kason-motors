@@ -116,12 +116,12 @@ const SERVICES: ServiceCardProps[] = [
   {
     icon: <CarIcon />,
     number: "01",
-    title: "New Energy & Gasoline Vehicles",
+    title: "Fully Electric Vehicles & Smart Mobility",
     items: [
-      "Luxury, executive & mid-size cars",
-      "Compact, mini & commercial vehicles",
-      "New Energy Vehicles (NEVs & PHEVs)",
-      "50+ cooperative brands available",
+      "Premium, executive & family electric vehicles",
+      "Compact, city & commercial EVs",
+      "100% Battery Electric Vehicles (EVs)",
+      "Multiple trusted EV brands available",
     ],
   },
   {
@@ -130,29 +130,31 @@ const SERVICES: ServiceCardProps[] = [
     title: "Competitive Pricing & Fast Delivery",
     items: [
       "Factory-direct pricing advantages",
-      "Sea shipping logistics managed end-to-end",
-      "1,000+ units exported annually",
-      "Serving Middle Asia, Russia, Middle East & Africa",
+      "End-to-end international shipping logistics",
+      "Efficient vehicle sourcing & export services",
+      "Serving Africa and international markets",
     ],
   },
   {
     icon: <WrenchIcon />,
     number: "03",
-    title: "After-Sales & Spare Parts",
+    title: "EV After-Sales & Spare Parts Support",
     items: [
-      "Reliable genuine spare parts supply",
-      "Excellent after-sales support",
-      "Technical assistance for EVs & conventional vehicles",
+      "Genuine electric vehicle spare parts supply",
+      "Reliable after-sales support",
+      "Technical assistance for electric vehicles",
+      "Battery, charging & maintenance support",
     ],
   },
   {
     icon: <TruckIcon />,
     number: "04",
-    title: "Fleet & Commercial Solutions",
+    title: "Fleet & Commercial EV Solutions",
     items: [
-      "Large-scale fleet acquisition & management",
-      "Solutions for government, embassies & logistics",
-      "Commercial vehicle supply for industry & SMEs",
+      "Large-scale EV fleet acquisition & management",
+      "Electric mobility solutions for businesses & institutions",
+      "Commercial EV supply for logistics & SMEs",
+      "Sustainable transportation solutions",
     ],
   },
   {
@@ -160,19 +162,21 @@ const SERVICES: ServiceCardProps[] = [
     number: "05",
     title: "Finance & Payment Support",
     items: [
-      "Strong financing support for individuals & businesses",
-      "Various payment collection channels",
-      "Flexible terms for large-scale procurement",
+      "Financing support for individuals & businesses",
+      "Flexible payment channels",
+      "Bulk procurement support",
+      "Business-friendly purchasing terms",
     ],
   },
   {
     icon: <GlobeIcon />,
     number: "06",
-    title: "Global Export Experience",
+    title: "Global EV Export Experience",
     items: [
-      "10+ years of professional export experience",
-      "8 sales offices across different countries",
-      "Ministry of Commerce certified export qualification",
+      "Professional electric vehicle export expertise",
+      "Reliable international supply network",
+      "Cross-border EV logistics & delivery",
+      "Trusted EV sourcing and trade support",
     ],
   },
 ];
@@ -185,12 +189,12 @@ export const AboutServices: React.FC = () => (
           What We Offer
         </span>
         <h2 className="text-3xl font-bold text-font">
-          A Trusted Automotive Partner
+          Your Trusted Electric Vehicle Partner
         </h2>
         <p className="text-gray-mid text-sm mt-3 max-w-xl mx-auto">
-          More than a car exporter — Kason Motor delivers end-to-end vehicle
-          solutions backed by over a decade of experience, factory-level support,
-          and a stable global supply chain.
+          Kason Motors delivers complete electric vehicle solutions backed by
+          factory support, global sourcing expertise, and a reliable
+          international supply chain.
         </p>
       </div>
 
@@ -198,7 +202,7 @@ export const AboutServices: React.FC = () => (
         {SERVICES.map((s) => (
           <ServiceCard key={s.number} {...s} />
         ))}
-    </div>
+      </div>
     </div>
   </section>
 );
