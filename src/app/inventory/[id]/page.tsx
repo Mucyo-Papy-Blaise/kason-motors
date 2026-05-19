@@ -25,7 +25,7 @@ type CarDetails = {
   model?: string;
   condition?: string;
   body_type?: string;
-  engine_size?: string;
+  // engine_size?: string;
   drive_type?: string;
   horsepower?: number | null;
   exterior_color?: string | null;
@@ -116,7 +116,7 @@ export default function CarDetailPage() {
       value: car?.transmission ?? "-",
       icon: "transmission",
     },
-    { label: "Engine", value: car?.engine_size ?? "-", icon: "engine" },
+    // { label: "Engine", value: car?.engine_size ?? "-", icon: "engine" },
     { label: "Drive", value: car?.drive_type ?? "-", icon: "drive" },
   ];
 
