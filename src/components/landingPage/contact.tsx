@@ -124,7 +124,7 @@ export default function Contact() {
       <section className="relative h-100 md:h-120 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/marcedes.jpg')" }}
+          style={{ backgroundImage: "url('/car2.jpeg')" }}
         />
         <div className="absolute inset-0 bg-linear-to-b from-primary-dark/85 via-primary/60 to-ink/80" />
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 text-center">
