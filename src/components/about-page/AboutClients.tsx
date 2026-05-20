@@ -5,8 +5,8 @@ import React from "react";
 
 const REGIONS = [
   { label: "Middle Asia", flag: "🌏", markets: ["China"] },
-  { label: "Russia", flag: "🌍", markets: ["Moscow", "St. Petersburg", "Novosibirsk", "Ekaterinburg"] },
-  { label: "Middle East", flag: "🌎", markets: ["UAE", "Saudi Arabia", "Kuwait", "Qatar"] },
+  // { label: "Russia", flag: "🌍", markets: ["Moscow", "St. Petersburg", "Novosibirsk", "Ekaterinburg"] },
+  // { label: "Middle East", flag: "🌎", markets: ["UAE", "Saudi Arabia", "Kuwait", "Qatar"] },
   { label: "Africa", flag: "🌍", markets: ["Rwanda"] },
 ];
 
