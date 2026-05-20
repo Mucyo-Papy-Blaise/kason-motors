@@ -68,15 +68,22 @@ export const AboutAudience: React.FC = () => (
     <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-14 items-center">
       {/* Image side */}
       <div className="relative order-2 md:order-1">
-        <div className="overflow-hidden shadow-xl aspect-square max-w-md mx-auto">
+        {/*
+          bg-white  → blends the car's white background so there's no visible box
+          aspect-[4/3] → wide cinematic frame that shows the full car
+          object-contain → full car visible, no cropping
+          flex items-center justify-center → centers the car inside the frame
+        */}
+        <div className="overflow-hidden shadow-xl w-full max-w-md mx-auto aspect-[4/3] bg-white flex items-center justify-center">
           <img
-            src="https://images.pexels.com/photos/32644774/pexels-photo-32644774.jpeg"
+            src="/car1.jpeg"
             alt="Kason Motors clients"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain object-center block"
           />
         </div>
-        {/* Accent stripe */}
-        <div className="absolute -top-4 -right-4 w-24 h-24  bg-accent/30 -z-10" />
+
+        {/* Accent stripes */}
+        <div className="absolute -top-4 -right-4 w-24 h-24 bg-accent/30 -z-10" />
         <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary/20 -z-10" />
       </div>
 
