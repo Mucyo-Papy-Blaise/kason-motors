@@ -17,8 +17,14 @@ export const vehicleFormSchema = z.object({
   mileage: z
     .string()
     .min(1, "Mileage is required")
-    .refine((value) => !Number.isNaN(Number(value.replace(/,/g, ""))) && Number(value.replace(/,/g, "")) >= 0, {
-      message: "Mileage must be a valid number",
+    .refine((value) => value.trim().length > 0, {
+      message: "Mileage is required",
+    }),
+  stockCount: z
+    .string()
+    .min(1, "Number of cars is required")
+    .refine((value) => Number.isInteger(Number(value)) && Number(value) > 0, {
+      message: "Number of cars must be a whole number greater than 0",
     }),
   // engineSize: z.string().min(1, "Engine size is required"),
   fuel: z.string().min(1, "Please select fuel type"),

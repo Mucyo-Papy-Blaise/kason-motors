@@ -7,6 +7,7 @@ import FeaturedCars from "@/components/landingPage/FeaturedCars";
 import WhyChooseUs from "@/components/landingPage/WhyChooseUs";
 import Testimonials from "@/components/landingPage/Testimonials";
 import Footer from "@/components/landingPage/Footer";
+import ContactPopup from "@/components/landingPage/ContactPopup";
 import { getProfileByUserId } from "@/lib/profiles";
 import { verifyAuthToken } from "@/lib/auth/token";
 import { AUTH_COOKIE_NAME } from "@/lib/auth/token";
@@ -42,6 +43,7 @@ export default async function Home() {
       <WhyChooseUs />
       <Testimonials />
       <Footer />
+      <ContactPopup />
     </main>
   );
 }

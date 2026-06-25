@@ -98,15 +98,14 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3.5">
               <li>
-                <a
-                  href="tel:+250799525895"
+                <div
                   className="flex items-start gap-3 text-white/40 text-sm hover:text-white transition-colors group"
                 >
                   <span className="mt-0.5 w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
                     <Phone size={12} className="text-primary" />
                   </span>
-                  +250 799 525 895 
-                </a>
+                  +250 799 525 895 / +250 793 154 837
+                </div>
               </li>
 
               <li>

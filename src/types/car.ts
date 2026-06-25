@@ -26,6 +26,8 @@ export type Car = {
   price: string | number;
   year: string | number;
   mileage: string | number;
+  stockCount?: string | number;
+  stock_count?: number | null;
   fuel: string;
   transmission: string;
   image: string;
@@ -57,6 +59,7 @@ export const EMPTY_FORM = {
   price: "",
   year: "",
   mileage: "",
+  stockCount: "1",
   fuel: "",
   transmission: "",
   image: "",
@@ -81,6 +84,21 @@ export function normalizeCarImages(
   }
 
   return isNonEmptyString(image) ? [image] : [];
+}
+
+export function formatMileage(value: string | number | null | undefined) {
+  if (value === null || value === undefined || value === "") {
+    return "-";
+  }
+
+  const mileage = String(value).trim();
+  const numericMileage = Number(mileage.replace(/,/g, ""));
+
+  if (!Number.isNaN(numericMileage) && /^-?[\d,]+(\.\d+)?$/.test(mileage)) {
+    return `${numericMileage.toLocaleString()} km`;
+  }
+
+  return `${mileage} km`;
 }
 
 export type CarType = 'Mini' | 'Standard' | 'Compact' | 'Economy' | 'Van' | 'Pickup' | 'Other';

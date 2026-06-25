@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { InventoryCar } from "./Carlistingpage";
+import { formatMileage } from "@/types/car";
 
 interface CarCardProps {
   car: InventoryCar;
@@ -15,17 +16,12 @@ const ZapIcon = () => (
   </svg>
 );
 
-const StarIcon = () => (
-  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-  </svg>
-);
-
 export const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const imageUrl = car.image_urls?.[0] || car.image || "";
   const title = car.title || `${car.brand} ${car.model}`.trim() || car.name;
   const bodyType = car.body_type || car.type || "-";
   const price = Number(car.price || 0);
+  const stockCount = car.stock_count ?? 1;
 
   const DEFAULT_BADGES = ["", ""];
   const showBadge =
@@ -113,7 +109,10 @@ export const CarCard: React.FC<CarCardProps> = ({ car }) => {
               <span className="flex items-center gap-1">{car.fuel || "-"}</span>
               <span className="flex items-center gap-1">{car.transmission || "-"}</span>
               <span className="flex items-center gap-1">
-                {Number(car.mileage || 0).toLocaleString()} km
+                {formatMileage(car.mileage)}
+              </span>
+              <span className="flex items-center gap-1 text-primary">
+                <span className="font-semibold">Stock:</span> {stockCount}
               </span>
               {car.drive_type ? (
                 <span className="flex items-center gap-1 text-primary">

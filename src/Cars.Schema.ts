@@ -14,10 +14,7 @@ export  const carSchema = z.object({
       message: "Year must be a number",
     }),
   mileage: z.string()
-    .min(1, "Mileage is required")
-    .refine((val) => !isNaN(Number(val)) && val.trim() !== "", {
-      message: "Mileage must be a number",
-    }),
+    .min(1, "Mileage is required"),
   fuel: z.string().min(1, "Fuel is required"),
   transmission: z.string().min(1, "Transmission is required"),
   image: z.string().optional(),

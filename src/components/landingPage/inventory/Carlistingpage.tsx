@@ -28,6 +28,7 @@ export type InventoryCar = {
   fuel?: string;
   transmission?: string;
   mileage?: number | string;
+  stock_count?: number | null;
   year?: number | string;
   price?: number | string;
   image?: string;

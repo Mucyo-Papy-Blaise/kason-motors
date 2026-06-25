@@ -4,18 +4,13 @@ import Link from "next/link";
 import React from "react";
 
 const REGIONS = [
-  { label: "Middle Asia", flag: "🌏", markets: ["China"] },
-  // { label: "Russia", flag: "🌍", markets: ["Moscow", "St. Petersburg", "Novosibirsk", "Ekaterinburg"] },
-  // { label: "Middle East", flag: "🌎", markets: ["UAE", "Saudi Arabia", "Kuwait", "Qatar"] },
-  { label: "Africa", flag: "🌍", markets: ["Rwanda"] },
+  { label: "Middle Asia", flag: "🌏", markets: ["China", "Belarus", "Uzbekistan"] },
+  { label: "Africa", flag: "🌍", markets: ["Rwanda", "Ghana"] },
 ];
 
 const OFFICES = [
-  { city: "Liaocheng", country: "China", role: "Head Office", icon: "🏢" },
-  // { city: "Khorgos", country: "China / Kazakhstan", role: "Representative Office", icon: "📍" },
-  // { city: "Tashkent", country: "Uzbekistan", role: "Representative Office", icon: "📍" },
-  // { city: "Moscow", country: "Russia", role: "Representative Office", icon: "📍" },
-  { city: "Africa (×4)", country: "Rwanda", role: "Representative Offices", icon: "📍" },
+  { city: "Liaocheng, Guangzhou", country: "China", role: "Head Office", icon: "🏢" },
+  { city: "Africa", country: "Rwanda · Ghana", role: "Representative Offices", icon: "📍" },
 ];
 
 export const AboutClients: React.FC = () => (
@@ -42,7 +37,7 @@ export const AboutClients: React.FC = () => (
 
         {/* Export Markets */}
         <div className="bg-gray-dark border border-line/25 p-8">
-          <h3 className="font-bold text-font text-sm mb-6 uppercase tracking-widest text-xs text-primary">
+          <h3 className="font-bold text-font mb-6 uppercase tracking-widest text-xs text-primary">
             Export Markets
           </h3>
           <div className="space-y-5">
@@ -51,7 +46,7 @@ export const AboutClients: React.FC = () => (
                 <span className="text-2xl shrink-0">{r.flag}</span>
                 <div>
                   <p className="font-bold text-font text-sm mb-1">{r.label}</p>
-                  <p className="text-gray-mid text-xs leading-relaxed">
+                  <p className="text-font/70 text-sm font-semibold leading-relaxed">
                     {r.markets.join(" · ")}
                   </p>
                 </div>
@@ -62,7 +57,7 @@ export const AboutClients: React.FC = () => (
 
         {/* Office Locations */}
         <div className="bg-gray-dark border border-line/25 p-8">
-          <h3 className="font-bold text-font text-sm mb-6 uppercase tracking-widest text-xs text-primary">
+          <h3 className="font-bold text-font mb-6 uppercase tracking-widest text-xs text-primary">
             Our Office Network
           </h3>
           <div className="space-y-4">
@@ -79,7 +74,7 @@ export const AboutClients: React.FC = () => (
                       {o.role}
                     </span>
                   </div>
-                  <p className="text-gray-mid text-xs mt-0.5">{o.country}</p>
+                  <p className="text-font/70 text-sm font-semibold mt-0.5">{o.country}</p>
                 </div>
               </div>
             ))}

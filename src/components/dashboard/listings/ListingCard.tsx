@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Car, normalizeCarImages } from "@/types/car";
+import { Car, formatMileage, normalizeCarImages } from "@/types/car";
 import { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,38 +19,118 @@ export default function VehicleList() {
   const [cars, setCars] = useState<Car[]>([]);
   const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [stockEdits, setStockEdits] = useState<Record<number, string>>({});
+  const [stockSavingId, setStockSavingId] = useState<number | null>(null);
+  const [stockSellingId, setStockSellingId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const readCachedCars = () => {
-      try {
-        const rawCache = sessionStorage.getItem(CARS_CACHE_KEY);
-        if (!rawCache) {
-          return null;
-        }
-        const parsed = JSON.parse(rawCache) as CachedCarsPayload;
-        const isFresh = Date.now() - parsed.cachedAt < CARS_CACHE_TTL_MS;
-        if (!isFresh) {
-          return null;
-        }
-        return parsed.data;
-      } catch {
+  const readCachedCars = () => {
+    try {
+      const rawCache = sessionStorage.getItem(CARS_CACHE_KEY);
+      if (!rawCache) {
         return null;
       }
-    };
-
-    const writeCachedCars = (nextCars: Car[]) => {
-      try {
-        const payload: CachedCarsPayload = {
-          data: nextCars,
-          cachedAt: Date.now(),
-        };
-        sessionStorage.setItem(CARS_CACHE_KEY, JSON.stringify(payload));
-      } catch {
-        // Ignore cache write failures.
+      const parsed = JSON.parse(rawCache) as CachedCarsPayload;
+      const isFresh = Date.now() - parsed.cachedAt < CARS_CACHE_TTL_MS;
+      if (!isFresh) {
+        return null;
       }
-    };
+      return parsed.data;
+    } catch {
+      return null;
+    }
+  };
 
+  const writeCachedCars = (nextCars: Car[]) => {
+    try {
+      const payload: CachedCarsPayload = {
+        data: nextCars,
+        cachedAt: Date.now(),
+      };
+      sessionStorage.setItem(CARS_CACHE_KEY, JSON.stringify(payload));
+    } catch {
+      // Ignore cache write failures.
+    }
+  };
+
+  const syncCars = (nextCars: Car[]) => {
+    setCars(nextCars);
+    writeCachedCars(nextCars);
+  };
+
+  const formatStockValue = (car: Car) =>
+    stockEdits[car.id] ?? String(car.stock_count ?? car.stockCount ?? 0);
+
+  const handleStockInputChange = (carId: number, value: string) => {
+    setStockEdits((prev) => ({ ...prev, [carId]: value }));
+  };
+
+  const handleStockUpdate = async (car: Car, nextStockCount: number) => {
+    if (!Number.isInteger(nextStockCount) || nextStockCount < 0) {
+      toast.error("Stock count must be a whole number greater than or equal to 0", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    setStockSavingId(car.id);
+
+    try {
+      const response = await fetch(`/api/vehicles/stock/${car.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stockCount: nextStockCount }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        throw new Error(result.message || "Failed to update stock");
+      }
+
+      const nextCars = cars.map((item) =>
+        item.id === car.id
+          ? { ...item, stock_count: nextStockCount }
+          : item
+      );
+      syncCars(nextCars);
+      setStockEdits((prev) => ({ ...prev, [car.id]: String(nextStockCount) }));
+      toast.success("Stock count updated", {
+        position: "top-right",
+        autoClose: 2500,
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Unable to update stock",
+        { position: "top-right", autoClose: 4000 }
+      );
+    } finally {
+      setStockSavingId(null);
+    }
+  };
+
+  const handleUpdateStock = async (car: Car) => {
+    const rawValue = formatStockValue(car);
+    const nextStockCount = Number(rawValue);
+    await handleStockUpdate(car, nextStockCount);
+  };
+
+  const handleSold = async (car: Car) => {
+    const currentStock = Number(car.stock_count ?? car.stockCount ?? 0);
+    if (currentStock <= 0) {
+      toast.error("Stock is already zero", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
+    setStockSellingId(car.id);
+    await handleStockUpdate(car, currentStock - 1);
+    setStockSellingId(null);
+  };
+
+  useEffect(() => {
     const fetchCars = async () => {
       try {
         const cachedCars = readCachedCars();
@@ -226,6 +306,12 @@ export default function VehicleList() {
                       Mileage
                     </th>
                     <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Stock
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
+                      Stock Actions
+                    </th>
+                    <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
                       Fuel
                     </th>
                     <th className="text-left px-4 py-3.5 text-xs font-bold text-gray-500 uppercase tracking-widest">
@@ -301,9 +387,37 @@ export default function VehicleList() {
                           {car.year || "-"}
                         </td>
                         <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
-                          {car.mileage
-                            ? `${Number(car.mileage).toLocaleString()} km`
-                            : "-"}
+                          {formatMileage(car.mileage)}
+                        </td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          <input
+                            type="number"
+                            min={0}
+                            step={1}
+                            value={formatStockValue(car)}
+                            onChange={(event) =>
+                              handleStockInputChange(car.id, event.target.value)
+                            }
+                            className="w-20 px-2 py-1 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          />
+                        </td>
+                        <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => handleUpdateStock(car)}
+                              disabled={stockSavingId === car.id}
+                              className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors disabled:cursor-not-allowed disabled:bg-primary/40"
+                            >
+                              {stockSavingId === car.id ? "Saving" : "Save"}
+                            </button>
+                            <button
+                              onClick={() => handleSold(car)}
+                              disabled={stockSellingId === car.id}
+                              className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition-colors disabled:cursor-not-allowed disabled:bg-emerald-100"
+                            >
+                              {stockSellingId === car.id ? "Selling" : "Sold"}
+                            </button>
+                          </div>
                         </td>
                         <td className="px-4 py-3.5 text-gray-600 whitespace-nowrap">
                           {car.fuel || "-"}

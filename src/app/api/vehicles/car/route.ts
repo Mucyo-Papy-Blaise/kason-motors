@@ -24,7 +24,8 @@ export async function POST(req: NextRequest) {
       year: Number(payloadData.year),
       condition: payloadData.condition,
       body_type: payloadData.bodyType,
-      mileage: Number(payloadData.mileage.replace(/,/g, "")),
+      mileage: payloadData.mileage.trim(),
+      stock_count: Number(payloadData.stockCount),
      
       fuel: payloadData.fuel,
       transmission: payloadData.transmission,

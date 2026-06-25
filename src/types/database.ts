@@ -61,7 +61,8 @@ export type Database = {
           type: string | null;
           price: number | null;
           year: number | null;
-          mileage: number | null;
+          mileage: string | null;
+          stock_count: number | null;
           fuel: string | null;
           transmission: string | null;
           image: string | null;
@@ -81,7 +82,8 @@ export type Database = {
           type?: string | null;
           price?: number | null;
           year?: number | null;
-          mileage?: number | null;
+          mileage?: string | null;
+          stock_count?: number | null;
           fuel?: string | null;
           transmission?: string | null;
           image?: string | null;
@@ -101,7 +103,8 @@ export type Database = {
           type?: string | null;
           price?: number | null;
           year?: number | null;
-          mileage?: number | null;
+          mileage?: string | null;
+          stock_count?: number | null;
           fuel?: string | null;
           transmission?: string | null;
           image?: string | null;

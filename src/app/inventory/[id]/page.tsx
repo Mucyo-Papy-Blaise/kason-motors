@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import Navbar from "@/components/landingPage/Navbar";
 import Footer from "@/components/landingPage/Footer";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { formatMileage } from "@/types/car";
 
 type CarDetails = {
   id: number;
@@ -16,7 +17,8 @@ type CarDetails = {
   type?: string;
   price?: number;
   year?: number;
-  mileage?: number;
+  mileage?: number | string;
+  stock_count?: number | null;
   fuel?: string;
   transmission?: string;
   image?: string;
@@ -107,7 +109,7 @@ export default function CarDetailPage() {
     { label: "Year", value: car?.year ?? "-", icon: "year" },
     {
       label: "Mileage",
-      value: `${Number(car?.mileage || 0).toLocaleString()} km`,
+      value: formatMileage(car?.mileage),
       icon: "mileage",
     },
     { label: "Fuel", value: car?.fuel ?? "-", icon: "fuel" },

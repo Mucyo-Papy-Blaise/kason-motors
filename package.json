@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "db:migrate": "pnpm exec supabase db push --schema supabase/schema.sql",
     "seed:admin": "ts-node -r tsconfig-paths/register --project scripts/tsconfig.json ./scripts/seed-admin.ts"
   },
   "dependencies": {
@@ -36,6 +37,7 @@
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "supabase": "^2.108.0"
   }
 }

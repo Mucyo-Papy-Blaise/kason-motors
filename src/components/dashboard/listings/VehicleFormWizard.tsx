@@ -44,7 +44,7 @@ type SelectFieldProps = {
 };
 
 const REQUIRED_FIELDS_BY_STEP: Record<number, (keyof VehicleFormData)[]> = {
-  0: ["title", "brand", "model", "year", "condition", "bodyType"],
+  0: ["title", "brand", "model", "year", "condition", "bodyType", "stockCount"],
   // 1: ["mileage", "engineSize", "fuel", "transmission", "driveType"],
   2: [],
   3: ["price", "description", "image", "imageUrls"],
@@ -394,6 +394,25 @@ export default function VehicleFormWizard({
             error={errors.bodyType}
             onChange={handleChange}
           />
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">
+              Number of Cars <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              min={1}
+              step={1}
+              inputMode="numeric"
+              name="stockCount"
+              value={form.stockCount}
+              onChange={handleChange}
+              placeholder="e.g. 3"
+              className={inputClass("stockCount")}
+            />
+            {errors.stockCount ? (
+              <p className="mt-1.5 text-xs text-red-500">{errors.stockCount}</p>
+            ) : null}
+          </div>
         </div>
       ) : null}
 
@@ -436,6 +455,7 @@ export default function VehicleFormWizard({
               name="mileage"
               value={form.mileage}
               onChange={handleChange}
+              placeholder="e.g. 1000-3000"
               className={inputClass("mileage")}
             />
             {errors.mileage ? (

@@ -115,7 +115,7 @@ export default function Navbar({ user }: NavbarProps) {
             <span className="sm:hidden">CHINA EV MALL Special Economic Zone</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <Phone size={12} /> +250 799 525 895
+            <Phone size={12} /> +250 799 525 895 / +250 793 154 837
           </span>
           <span className="hidden md:flex items-center gap-1.5">
             <Clock size={12} /> Monday - Sunday
