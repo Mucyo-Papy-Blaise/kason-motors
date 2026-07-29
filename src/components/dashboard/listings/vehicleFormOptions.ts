@@ -27,7 +27,7 @@ export const BODY_TYPE_OPTIONS = [
 
 export const FUEL_OPTIONS = ["Petrol", "Diesel", "Electric", "Hybrid"] as const;
 export const TRANSMISSION_OPTIONS = ["Automatic", "Manual"] as const;
-export const DRIVE_TYPE_OPTIONS = ["FWD", "RWD", "AWD", "4WD"] as const;
+export const DRIVE_TYPE_OPTIONS = ["FWD", "RWD", "AWD" ,"2WD", "4WD"] as const;
 
 export const EXTERIOR_COLOR_OPTIONS = [
   "Black",
